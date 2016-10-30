@@ -1,0 +1,98 @@
+package ch.specchio.util;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import ch.specchio.client.SPECCHIOClient;
+import ch.specchio.client.SPECCHIOClientException;
+import ch.specchio.model.MetaDataObject;
+import ch.specchio.types.MatlabAdaptedArrayList;
+
+public class SpecchioUtil {
+	
+	private SPECCHIOClient specchio_client;
+	private List<MetaDataObject> metaDataObjectList;
+	private ArrayList<Integer> ids;
+	private Map<String, String> keywordToAttributeMap;
+	
+	public SpecchioUtil() throws SPECCHIOClientException, FileNotFoundException, IOException {
+		initMetaDataObjectList();
+		initKeyWordToAttributeMap();
+	}
+	
+	private void initMetaDataObjectList(){
+		metaDataObjectList = new LinkedList<MetaDataObject>();
+		for(int i = 0; i < ids.size(); i++){
+			metaDataObjectList.add(new MetaDataObject());
+		}
+	}
+	
+	private void initKeyWordToAttributeMap(){
+		keywordToAttributeMap = new HashMap<>();
+		keywordToAttributeMap.put("at", "Acquisition Time");
+		keywordToAttributeMap.put("cn", "Campaign Name");
+		keywordToAttributeMap.put("in", "Investigator");
+		keywordToAttributeMap.put("fn", "Filename");
+	}
+	
+	public void fillMetaparameterValues(SPECCHIOClient specchio_client, ArrayList<Integer> ids){
+		this.specchio_client = specchio_client;
+		this.ids = ids;
+	}
+	
+	
+	public void fillFileNames(){
+		MatlabAdaptedArrayList<Object> resultList = getMetaparameterValues(ids, "File Name");
+		for(int i = 0; i < resultList.size(); i++){
+			MetaDataObject metaDO = metaDataObjectList.get(i);
+			Object o = resultList.get(i);
+			metaDO.setFilename(o != null ? o.toString() : "no data");
+		}
+	}
+	
+	public void fillAcquisitionTime(){
+		MatlabAdaptedArrayList<Object> resultList = getMetaparameterValues(ids, "Acquisition Time");
+		for(int i = 0; i < resultList.size(); i++){
+			MetaDataObject metaDO = metaDataObjectList.get(i);
+			Object o = resultList.get(i);
+			metaDO.setAcquisitionTime(o != null ? o.toString() : "no data");
+		}
+	}
+	
+	public void fillCampaignName(){
+		MatlabAdaptedArrayList<Object> resultList = getMetaparameterValues(ids, "Campaign Name");
+		for(int i = 0; i < resultList.size(); i++){
+			MetaDataObject metaDO = metaDataObjectList.get(i);
+			Object o = resultList.get(i);
+			metaDO.setCampaignName(o != null ? o.toString() : "no data");
+		}
+	}
+	
+	public void fillInvestigator(){
+		MatlabAdaptedArrayList<Object> resultList = getMetaparameterValues(ids, "Investigator");
+		for(int i = 0; i < resultList.size(); i++){
+			MetaDataObject metaDO = metaDataObjectList.get(i);
+			Object o = resultList.get(i);
+			metaDO.setInvestigator(o != null ? o.toString() : "no data");
+		}
+	}
+	
+	public MatlabAdaptedArrayList<Object> getMetaparameterValues(ArrayList<Integer> ids, String metaparameter){
+		return specchio_client.getMetaparameterValues(ids, metaparameter);
+		
+	}
+	
+	public String getAttributeForKeyword(String keyword){
+		return keywordToAttributeMap.get(keyword);
+	}
+
+	public List<MetaDataObject> getMetaDataObjectList() {
+		return metaDataObjectList;
+	}
+	
+}

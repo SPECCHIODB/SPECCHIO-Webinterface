@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;asdf&apos; to &apos;SPECCHIO_WebApp&apos;" description="Rename resource &apos;asdf&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/asdf" name="SPECCHIO_WebApp" stamp="1475841313554" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;SPECCHIO_WebApp&apos; to &apos;SPECCHIO Web Inteface&apos;" description="Rename resource &apos;SPECCHIO_WebApp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/SPECCHIO_WebApp" name="SPECCHIO Web Inteface" stamp="1475841578121" updateReferences="true"/>
+</session>

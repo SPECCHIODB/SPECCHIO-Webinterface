@@ -1,0 +1,26 @@
+package ch.specchio.model;
+
+public class MetaDataObject {
+
+	
+	private String date;
+	private String campaign;
+	private String owner;
+	private String name;
+	private String filename;
+	private String institute;
+	
+	
+	
+	public MetaDataObject() {
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+}

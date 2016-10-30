@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="ch.specchio.types.attribute"/>
+<fullyQualifiedTypeName name="ch.specchio.queries.EAVQueryConditionObject"/>
+<fullyQualifiedTypeName name="java.util.Hashtable"/>
+<fullyQualifiedTypeName name="ch.specchio.queries.Query"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.sun.jersey.spi.dispatch.RequestDispatcher"/>
+<fullyQualifiedTypeName name="ch.specchio.spaces.Space"/>
+<fullyQualifiedTypeName name="ch.specchio.types.MatlabAdaptedArrayList"/>
+<fullyQualifiedTypeName name="com.quinncurtis.chart3djava.Legend"/>
+<fullyQualifiedTypeName name="ch.specchio.model.MetaValue"/>
+<fullyQualifiedTypeName name="ch.specchio.model.MetaDataObject"/>
+<fullyQualifiedTypeName name="java.util.LinkedList"/>
+<fullyQualifiedTypeName name="ch.specchio.util.SpecchioUtil"/>
+<fullyQualifiedTypeName name="com.sun.xml.xsom.impl.scd.Iterators.Map"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+</qualifiedTypeNameHistroy>
