@@ -1,0 +1,20 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="755" measuredH="704" mockupW="450" mockupH="400">
+  <controls>
+    <control controlID="2" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="305" y="304" w="-1" h="-1" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>A%20Web%20Page%0Ahttp%3A//www.specchio.ch</text>
+      </controlProperties>
+    </control>
+    <control controlID="4" controlTypeID="com.balsamiq.mockups::Label" x="498" y="449" w="-1" h="-1" measuredW="45" measuredH="21" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Results</text>
+      </controlProperties>
+    </control>
+    <control controlID="5" controlTypeID="com.balsamiq.mockups::Image" x="320" y="386" w="53" h="22" measuredW="77" measuredH="79" zOrder="2" locked="false" isInGroup="-1"/>
+    <control controlID="13" controlTypeID="com.balsamiq.mockups::DataGrid" x="379" y="485" w="302" h="171" measuredW="195" measuredH="171" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Name%20%5E%2C%20Author%20%5E%2C%20Date%0AItem1%2C%20name1%2C%2028.8.2016%0AItem2%2C%20name2%2C%205.8.2016%0AItem3%2C%20name3%2C%2030.6.2016%0AItem4%2C%20name4%2C%2017.8.2015%0AItem5%2C%20name5%2C%2012.3.2014</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
