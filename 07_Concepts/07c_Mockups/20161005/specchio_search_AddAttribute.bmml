@@ -1,0 +1,62 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1180" measuredH="868" mockupW="1080" mockupH="768">
+  <controls>
+    <control controlID="0" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="100" y="100" w="1080" h="768" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>A%20Web%20Page%0Ahttp%3A//www.specchio.ch</text>
+      </controlProperties>
+    </control>
+    <control controlID="1" controlTypeID="com.balsamiq.mockups::Image" x="100" y="199" w="1080" h="165" measuredW="77" measuredH="79" zOrder="1" locked="false" isInGroup="-1"/>
+    <control controlID="2" controlTypeID="com.balsamiq.mockups::SearchBox" x="501" y="463" w="278" h="-1" measuredW="228" measuredH="25" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Enter%20keywords%20comma%20seperated</text>
+      </controlProperties>
+    </control>
+    <control controlID="3" controlTypeID="com.balsamiq.mockups::ButtonBar" x="100" y="171" w="1080" h="34" measuredW="268" measuredH="27" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Home%2C%20SPECCHIO%20Project%2C%20Contact</text>
+      </controlProperties>
+    </control>
+    <control controlID="5" controlTypeID="com.balsamiq.mockups::Icon" x="787" y="464" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>Info2Icon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="7" controlTypeID="com.balsamiq.mockups::Icon" x="616" y="503" w="-1" h="-1" measuredW="48" measuredH="48" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>CircledPlusIcon%7Clarge</icon>
+      </controlProperties>
+    </control>
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::Label" x="594" y="562" w="-1" h="-1" measuredW="93" measuredH="21" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <align>center</align>
+        <text>Add%20attribute%28s%29</text>
+      </controlProperties>
+    </control>
+    <control controlID="10" controlTypeID="com.balsamiq.mockups::Accordion" x="276" y="423" w="210" h="220" measuredW="160" measuredH="294" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>-1</selectedIndex>
+        <text>Location%0AOptics%0AGeneral%0AEnvironmental%20Conditions%0AInstrument%20Settings%0ASampling%20Geometry%0AInstrument%0ANames</text>
+      </controlProperties>
+    </control>
+    <control controlID="11" controlTypeID="com.balsamiq.mockups::ModalScreen" x="100" y="171" w="1080" h="674" measuredW="320" measuredH="240" zOrder="7" locked="false" isInGroup="-1"/>
+    <control controlID="12" controlTypeID="com.balsamiq.mockups::Accordion" x="535" y="423" w="210" h="220" measuredW="199" measuredH="294" zOrder="10" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>-1</selectedIndex>
+        <text>Campaign%20Details%0AInstrumentation%0AKeywords%0AVegetation%20Biophysical%20Variables%0APictures%0APDFs%0AScientific%20References%0AData%20Portal</text>
+      </controlProperties>
+    </control>
+    <control controlID="13" controlTypeID="com.balsamiq.mockups::Accordion" x="794" y="423" w="210" h="220" measuredW="163" measuredH="267" zOrder="11" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>-1</selectedIndex>
+        <text>Generic%20Target%20Properties%0AProcessing%0APersonnel%0AIllumination%0ASoil%20Parameters%0AData%20Links%0AGeochemistry</text>
+      </controlProperties>
+    </control>
+    <control controlID="14" controlTypeID="com.balsamiq.mockups::Canvas" x="216" y="319" w="848" h="379" measuredW="100" measuredH="70" zOrder="8" locked="false" isInGroup="-1"/>
+    <control controlID="15" controlTypeID="com.balsamiq.mockups::Title" x="276" y="369" w="-1" h="-1" measuredW="101" measuredH="27" zOrder="12" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>24</size>
+        <text>Category</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
