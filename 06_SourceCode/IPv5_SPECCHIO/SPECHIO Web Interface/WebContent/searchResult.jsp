@@ -26,6 +26,6 @@
 		</table> 
 		
 
-	
+		<a href="./search.jsp">Back</a>
 	</body>
 </html>

@@ -89,13 +89,18 @@ public class SpecchioUtil {
 		}
 	}
 	
+	// Common / Latin
+	private void fillName(){
+		
+	}
+	
 	private MatlabAdaptedArrayList<Object> getMetaparameterValues(ArrayList<Integer> ids, String metaparameter){
 		return specchio_client.getMetaparameterValues(ids, metaparameter);
 		
 	}
 	
 	public String getAttributeForKeyword(String keyword){
-		return keywordToAttributeMap.get(keyword);
+		return keywordToAttributeMap!= null ? keywordToAttributeMap.get(keyword) : "";
 	}
 
 }
