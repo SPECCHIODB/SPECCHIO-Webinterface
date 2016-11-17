@@ -1,0 +1,1 @@
+http, localhost, 8080, /specchio_service, sdb_admin, 5p3cch10, jdbc/specchio

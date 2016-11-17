@@ -1,0 +1,9 @@
+section {
+	overflow: hidden;
+  	width: 100%; /* for good measure */
+}
+
+details {
+	float: left;
+	margin-right: 5px;
+}
