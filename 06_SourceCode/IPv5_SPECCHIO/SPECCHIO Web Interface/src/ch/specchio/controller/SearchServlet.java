@@ -1,6 +1,8 @@
 package ch.specchio.controller;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -8,7 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 import ch.specchio.model.Attribute;
+import ch.specchio.model.SearchRowBean;
 import ch.specchio.util.SpecchioUtil;
 
 
@@ -18,28 +23,42 @@ public class SearchServlet extends HttpServlet {
 	
 	private void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		String category = req.getParameter("category") != null ? req.getParameter("category") : getServletConfig().getInitParameter("category");
-		String attribute = req.getParameter("attribute");
+		int numberOfRows = req.getParameter("numberOfRows") != null ? Integer.valueOf(req.getParameter("numberOfRows")) : 0;
 		
 		SpecchioUtil util = new SpecchioUtil();
+		List<SearchRowBean> searchRowBeanList = new LinkedList<>();
 		
-		
-		req.setAttribute("categoryList", util.getCategoryList());
-		req.setAttribute("attributeList", util.getAttributeList(category));
-		
-		req.setAttribute("selectedCategory", util.getCategory(category));
-		
-		Attribute attr = util.getAttribute(attribute, category);
-		req.setAttribute("selectedAttribute", attr);
-		
-		if(attr != null){
-			if("drop_down".equals(attr.getDefaultStorageField())){
-				req.setAttribute("inputDropdownValues", util.getInputDropdownValues(attr));
+		for(int i = 0; i < numberOfRows; i++){
+			
+			String category = req.getParameter("category_"+i);
+			if(category == null) continue; // skip categories that have been removed on the gui
+			
+			String attribute = req.getParameter("attribute_"+i);
+			
+			SearchRowBean srb = new SearchRowBean();
+			srb.setAttributeList(util.getAttributeList(category));
+			srb.setSelectedCategory(util.getCategory(category));
+			
+			Attribute attr = util.getAttribute(attribute, category);
+			srb.setSelectedAttribute(attr);
+			
+			if(attr != null){
+				srb.setUserInput1(req.getParameter("userInput1_"+i));
+				srb.setUserInput2(req.getParameter("userInput2_"+i));
+				
+				if("drop_down".equals(attr.getDefaultStorageField())){
+					srb.setDropdownPairList(util.getInputDropdownValues(attr));
+				}
+				else if("taxonomy_id".equals(attr.getDefaultStorageField())){
+					srb.setDropdownPairList(util.getTaxonomyList(attr));
+				}
 			}
-			else if("taxonomy_id".equals(attr.getDefaultStorageField())){
-				req.setAttribute("inputDropdownValues", util.getTaxonomyList(attr));
-			}
+			
+			searchRowBeanList.add(srb);
 		}
+		
+		req.setAttribute("categoryList", new Gson().toJson(util.getCategoryList()));
+		req.setAttribute("searchRowBeanList", new Gson().toJson(searchRowBeanList));
 		
 		
 		// show search.jsp

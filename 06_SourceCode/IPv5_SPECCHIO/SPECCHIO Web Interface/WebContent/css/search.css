@@ -1,9 +1,10 @@
-section {
-	overflow: hidden;
-  	width: 100%; /* for good measure */
+.searchRow {
+	width: 100%;
+	float: left;
+	margin-top: 5px;
 }
 
-details {
+section {
 	float: left;
 	margin-right: 5px;
 }

@@ -1,8 +1,11 @@
 package ch.specchio.util;
 
+import java.util.Collection;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import ch.specchio.client.SPECCHIOClient;
 import ch.specchio.client.SPECCHIOClientFactory;
@@ -103,17 +106,18 @@ public class SpecchioUtil {
 	}
 
 	public List<Pair<String,String>> getInputDropdownValues(Attribute attr) {
-		
+		List<Pair<String,String>> list = new LinkedList<Pair<String,String>>();
+			
 		switch(attr.getName()){
 			case MOST_WANTED_1:
-				return getMeasurementUnitList();
+				list = getMeasurementUnitList();
 			case MOST_WANTED_2:
-				return getSensorList();			
+				list = getSensorList();			
 			case MOST_WANTED_3:
-				return getInstrumentList();
+				list = getInstrumentList();
 		}
 		
-		return null;
+		return list;
 	}
 	
 	private List<Pair<String,String>> getMeasurementUnitList(){

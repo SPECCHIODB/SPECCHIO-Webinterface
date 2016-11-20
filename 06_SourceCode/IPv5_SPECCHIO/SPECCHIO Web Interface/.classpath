@@ -35,5 +35,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/specchio-types.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/SunPosition.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/ujmp-complete-0.2.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/gson-2.8.0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
