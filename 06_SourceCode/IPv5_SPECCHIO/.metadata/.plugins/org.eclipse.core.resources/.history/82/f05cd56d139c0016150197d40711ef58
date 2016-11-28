@@ -1,8 +1,0 @@
-package ch.specchio.model;
-
-public class Snippet {
-	for(Object o : filenames_){
-		System.out.println("filename: " +o.toString());
-	}
-}
-

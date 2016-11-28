@@ -1,7 +1,0 @@
-package ch.specchio.model;
-
-public class MetaValue {
-
-	private String filename;
-	
-}
