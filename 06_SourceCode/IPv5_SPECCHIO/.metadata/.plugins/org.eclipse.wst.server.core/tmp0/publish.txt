@@ -1,3 +1,4 @@
 #GlassFish 3
-#Sun Oct 30 15:08:19 CET 2016
+#Thu Nov 24 08:55:40 CET 2016
 org.eclipse.jst.jee.server\:SPECHIO\ Web\ Interface=C\:\\glassfish3\\glassfish\\domains\\domain1\\eclipseApps\\SPECHIO Web Interface
+org.eclipse.jst.jee.server\:SPECCHIO\ Web\ Interface=C\:\\glassfish3\\glassfish\\domains\\domain1\\eclipseApps\\SPECCHIO Web Interface
