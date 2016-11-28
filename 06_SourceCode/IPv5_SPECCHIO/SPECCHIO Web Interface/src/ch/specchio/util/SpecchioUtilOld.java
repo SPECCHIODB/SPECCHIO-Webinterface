@@ -58,7 +58,7 @@ public class SpecchioUtilOld {
 		for(int i = 0; i < resultList.size(); i++){
 			MetaDataBean metaDO = metaDataObjectList.get(i);
 			Object o = resultList.get(i);
-			metaDO.setFilename(o != null ? o.toString() : "no data");
+			metaDO.setFileName(o != null ? o.toString() : "no data");
 		}
 	}
 	

@@ -24,6 +24,8 @@ public class SearchServlet extends HttpServlet {
 	
 	private void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+		System.out.println("asdf");
+		
 		int numberOfRows = req.getParameter("numberOfRows") != null ? Integer.valueOf(req.getParameter("numberOfRows")) : 0;
 		boolean doSearch = "true".equals(req.getParameter("doSearch"));
 		
@@ -62,7 +64,8 @@ public class SearchServlet extends HttpServlet {
 		Gson gson = new Gson();
 		
 		if(doSearch) {
-			req.setAttribute("mdbList", gson.toJson(util.getSearchResult(searchRowBeanList)));
+			req.setAttribute("mdbList", util.getSearchResult(searchRowBeanList));
+			//req.setAttribute("mdbList", gson.toJson(util.getSearchResult(searchRowBeanList)));
 			rd = req.getRequestDispatcher("/searchResult.jsp"); // show searchResult.jsp
 		}
 		else {

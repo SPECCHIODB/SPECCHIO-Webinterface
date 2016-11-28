@@ -9,22 +9,22 @@
 	<body>
 		<table style="width:100%" border="1">
 			<tr>
-				<th>acquisitionTime</th>
-				<th>campaignName</th>
-			  	<th>owner</th>
-			  	<th>name</th>
-			  	<th>filename</th>
-			  	<th>institute</th>
+				<th>Acquisition Time</th>
+				<th>Campaign Name</th>
+			  	<th>Investigator</th>
+			  	<th>Name</th>
+			  	<th>File Name</th>
+			  	<th>Institute</th>
 			</tr>
 			
-			<c:forEach items="${metaDOs}" var="metaDO">  
+			<c:forEach items="${mdbList}" var="mdb">  
 			<tr>
-				<td>${metaDO.acquisitionTime}</td>
-				<td>${metaDO.campaignName}</td>
-				<td></td>
-				<td></td>
-				<td>${metaDO.filename}</td>
-				<td></td>
+				<td>${mdb.acquisitionTime}</td>
+				<td>${mdb.campaignName}</td>
+				<td>${mdb.investigator}</td>
+				<td>${mdb.name}</td>
+				<td>${mdb.fileName}</td>
+				<td>${mdb.institute}</td>
 			</tr>
 			</c:forEach> 
 		</table> 

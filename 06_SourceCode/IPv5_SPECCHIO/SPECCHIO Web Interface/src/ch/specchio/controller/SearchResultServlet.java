@@ -84,8 +84,8 @@ public class SearchResultServlet extends HttpServlet {
 		MetaDataBean mdo = new MetaDataBean();
 		mdo.setAcquisitionTime("time");
 		mdo.setCampaignName("asdfas");
-		mdo.setFilename("fillleee");
-		mdo.setInvestigator("norbert");
+		mdo.setFileName("fillleee");
+		//mdo.setInvestigator("norbert");
 		List<MetaDataBean> metaDOs = new LinkedList<>();//specchioUtil.fillMetaparameterValues(specchio_client, ids);
 		metaDOs.add(mdo);
 		req.setAttribute("metaDOs", metaDOs);
