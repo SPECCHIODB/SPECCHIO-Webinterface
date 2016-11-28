@@ -1,4 +1,5 @@
 var numberOfRows = 0;
+var doSearch = false;
 
 function init(){
 	
@@ -127,6 +128,7 @@ function clearUserInput(rowNr){
 function addHiddenfields(){
 	var form = $("#searchForm");
 	form.append('<input type="hidden" name="numberOfRows" value="'+numberOfRows+'"/>');
+	form.append('<input type="hidden" name="doSearch" value="'+doSearch+'"/>');
 }
 
 
@@ -140,7 +142,8 @@ $(document).ready(function() {
 	init();
 	
 	$("#searchButton").click(function(){
-		$("#searchResultForm").submit();
+		doSearch = true;
+		submitSearchForm();
 	});
 	
 	$("#addButton").click(function(){

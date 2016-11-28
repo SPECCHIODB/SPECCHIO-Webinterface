@@ -10,13 +10,13 @@ import java.util.Map;
 
 import ch.specchio.client.SPECCHIOClient;
 import ch.specchio.client.SPECCHIOClientException;
-import ch.specchio.model.MetaDataObject;
+import ch.specchio.model.MetaDataBean;
 import ch.specchio.types.MatlabAdaptedArrayList;
 
 public class SpecchioUtilOld {
 	
 	private SPECCHIOClient specchio_client;
-	private List<MetaDataObject> metaDataObjectList;
+	private List<MetaDataBean> metaDataObjectList;
 	private ArrayList<Integer> ids;
 	private Map<String, String> keywordToAttributeMap;
 	
@@ -25,9 +25,9 @@ public class SpecchioUtilOld {
 	}
 	
 	private void initMetaDataObjectList(){
-		metaDataObjectList = new LinkedList<MetaDataObject>();
+		metaDataObjectList = new LinkedList<MetaDataBean>();
 		for(int i = 0; i < ids.size(); i++){
-			metaDataObjectList.add(new MetaDataObject());
+			metaDataObjectList.add(new MetaDataBean());
 		}
 	}
 	
@@ -39,7 +39,7 @@ public class SpecchioUtilOld {
 		keywordToAttributeMap.put("fn", "File Name");
 	}
 	
-	public List<MetaDataObject> fillMetaparameterValues(SPECCHIOClient specchio_client, ArrayList<Integer> ids){
+	public List<MetaDataBean> fillMetaparameterValues(SPECCHIOClient specchio_client, ArrayList<Integer> ids){
 		this.specchio_client = specchio_client;
 		this.ids = ids;
 		initMetaDataObjectList();
@@ -56,7 +56,7 @@ public class SpecchioUtilOld {
 	private void fillFileNames(){
 		MatlabAdaptedArrayList<Object> resultList = getMetaparameterValues(ids, "File Name");
 		for(int i = 0; i < resultList.size(); i++){
-			MetaDataObject metaDO = metaDataObjectList.get(i);
+			MetaDataBean metaDO = metaDataObjectList.get(i);
 			Object o = resultList.get(i);
 			metaDO.setFilename(o != null ? o.toString() : "no data");
 		}
@@ -65,7 +65,7 @@ public class SpecchioUtilOld {
 	private void fillAcquisitionTime(){
 		MatlabAdaptedArrayList<Object> resultList = getMetaparameterValues(ids, "Acquisition Time");
 		for(int i = 0; i < resultList.size(); i++){
-			MetaDataObject metaDO = metaDataObjectList.get(i);
+			MetaDataBean metaDO = metaDataObjectList.get(i);
 			Object o = resultList.get(i);
 			metaDO.setAcquisitionTime(o != null ? o.toString() : "no data");
 		}
@@ -74,7 +74,7 @@ public class SpecchioUtilOld {
 	private void fillCampaignName(){
 		MatlabAdaptedArrayList<Object> resultList = getMetaparameterValues(ids, "Campaign Name");
 		for(int i = 0; i < resultList.size(); i++){
-			MetaDataObject metaDO = metaDataObjectList.get(i);
+			MetaDataBean metaDO = metaDataObjectList.get(i);
 			Object o = resultList.get(i);
 			metaDO.setCampaignName(o != null ? o.toString() : "no data");
 		}
@@ -83,7 +83,7 @@ public class SpecchioUtilOld {
 	private void fillInvestigator(){
 		MatlabAdaptedArrayList<Object> resultList = getMetaparameterValues(ids, "Investigator");
 		for(int i = 0; i < resultList.size(); i++){
-			MetaDataObject metaDO = metaDataObjectList.get(i);
+			MetaDataBean metaDO = metaDataObjectList.get(i);
 			Object o = resultList.get(i);
 			metaDO.setInvestigator(o != null ? o.toString() : "no data");
 		}

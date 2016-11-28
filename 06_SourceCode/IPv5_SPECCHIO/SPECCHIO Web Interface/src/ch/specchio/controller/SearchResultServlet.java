@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import ch.specchio.client.SPECCHIOClient;
 import ch.specchio.client.SPECCHIOClientFactory;
 import ch.specchio.client.SPECCHIOServerDescriptor;
-import ch.specchio.model.MetaDataObject;
+import ch.specchio.model.MetaDataBean;
 import ch.specchio.queries.EAVQueryConditionObject;
 import ch.specchio.queries.Query;
 import ch.specchio.spaces.Space;
@@ -81,12 +81,12 @@ public class SearchResultServlet extends HttpServlet {
 //		space = specchio_client.loadSpace(space); 
 //		
 //		
-		MetaDataObject mdo = new MetaDataObject();
+		MetaDataBean mdo = new MetaDataBean();
 		mdo.setAcquisitionTime("time");
 		mdo.setCampaignName("asdfas");
 		mdo.setFilename("fillleee");
 		mdo.setInvestigator("norbert");
-		List<MetaDataObject> metaDOs = new LinkedList<>();//specchioUtil.fillMetaparameterValues(specchio_client, ids);
+		List<MetaDataBean> metaDOs = new LinkedList<>();//specchioUtil.fillMetaparameterValues(specchio_client, ids);
 		metaDOs.add(mdo);
 		req.setAttribute("metaDOs", metaDOs);
 		

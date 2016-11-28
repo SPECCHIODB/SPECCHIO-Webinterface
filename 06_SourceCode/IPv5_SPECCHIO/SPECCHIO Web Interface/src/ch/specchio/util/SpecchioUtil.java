@@ -1,18 +1,20 @@
 package ch.specchio.util;
 
-import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import ch.specchio.client.SPECCHIOClient;
 import ch.specchio.client.SPECCHIOClientFactory;
 import ch.specchio.client.SPECCHIOServerDescriptor;
 import ch.specchio.model.Attribute;
 import ch.specchio.model.Category;
+import ch.specchio.model.MetaDataBean;
 import ch.specchio.model.Pair;
+import ch.specchio.model.SearchRowBean;
+import ch.specchio.queries.EAVQueryConditionObject;
+import ch.specchio.queries.Query;
+import ch.specchio.queries.SpectrumQueryCondition;
 import ch.specchio.types.CategoryTable;
 import ch.specchio.types.InstrumentDescriptor;
 import ch.specchio.types.Sensor;
@@ -111,10 +113,13 @@ public class SpecchioUtil {
 		switch(attr.getName()){
 			case MOST_WANTED_1:
 				list = getMeasurementUnitList();
+				break;
 			case MOST_WANTED_2:
-				list = getSensorList();			
+				list = getSensorList();
+				break;
 			case MOST_WANTED_3:
 				list = getInstrumentList();
+				break;
 		}
 		
 		return list;
@@ -153,6 +158,112 @@ public class SpecchioUtil {
 		}
 		return list;
 	}
+
+	public List<MetaDataBean> getSearchResult(List<SearchRowBean> searchRowBeanList) {
+		List<Integer> ids = new LinkedList<>();
+		Query query = new Query();
+		boolean fulltextsearch = false;
+		
+		for(SearchRowBean srb : searchRowBeanList){
+			
+			if(FIRST_CATEGORY.equals(srb.getSelectedCategory())){ // Full Text Search
+				ids = doFullTextSearch(srb); // TODO: kann fts in kombination mit anderen auftreten?
+				fulltextsearch = true;
+				break;
+			}
+			else if(SECOND_CATEGORY.equals(srb.getSelectedCategory())){ // Most Wanted
+				addSpectrumQueryCondition(query, srb);
+			}
+			else { // Other Categories
+				addEAVQueryCondition(query, srb);
+			}
+			
+		}
+		if (!fulltextsearch) ids = specchio_client.getSpectrumIdsMatchingQuery(query);
+		
+		return createMetaDataBeanList(ids);
+	}
+
+	private List<MetaDataBean> createMetaDataBeanList(List<Integer> ids){
+		List<MetaDataBean> mdbList = new LinkedList<>();
+		
+		for (Integer id : ids){
+			mdbList.add(fillMetaDataBean(id));
+		}
+	
+		return mdbList;
+	}
+	
+	private MetaDataBean fillMetaDataBean(Integer id) {
+		
+		MetaDataBean mdb = new MetaDataBean();
+		
+		
+		
+		return mdb;
+	}
+	
+
+	private void addEAVQueryCondition(Query query, SearchRowBean srb) {
+		attribute attr = srb.getSelectedAttribute().getAttribute();
+		EAVQueryConditionObject cond = null;
+		
+		String dsf = srb.getSelectedAttribute().getDefaultStorageField();
+		
+		if("string_val".equals(dsf) || "datetime_val".equals(dsf)){
+			cond = new EAVQueryConditionObject(attr);
+			cond.setValue(srb.getUserInput1());
+			cond.setOperator("like");
+			query.add_condition(cond);
+		}
+		else if("int_val".equals(dsf) || "double_val".equals(dsf)){
+			cond = new EAVQueryConditionObject(attr);
+			cond.setValue(srb.getUserInput1());
+			cond.setOperator(">=");
+			query.add_condition(cond);
+			
+			cond = new EAVQueryConditionObject(attr);
+			cond.setValue(srb.getUserInput2());
+			cond.setOperator("<=");
+			query.add_condition(cond);
+		}
+		else if("taxonomy_id".equals(dsf)){
+			cond = new EAVQueryConditionObject(attr);
+			cond.setValue(srb.getUserInput1());
+			cond.setOperator("=");
+			query.add_condition(cond);
+		}
+		else{
+			System.err.println(dsf);
+		}
+	}
+
+	private void addSpectrumQueryCondition(Query query, SearchRowBean srb) {
+		String idType = "";
+		
+		switch (srb.getSelectedAttribute().getName()){
+			case MOST_WANTED_1 :
+				idType = "measurement_unit_id";
+				break;
+			case MOST_WANTED_2 :
+				idType = "sensor_id";
+				break;
+			case MOST_WANTED_3 :
+				idType = "instrument_id";
+				break;
+		}
+		
+		SpectrumQueryCondition cond = new SpectrumQueryCondition("spectrum",idType); 
+		cond.setValue(srb.getUserInput1()); 
+		cond.setOperator("="); 
+		query.add_condition(cond); 
+	}
+
+	private List<Integer> doFullTextSearch(SearchRowBean srb) {
+		return specchio_client.getSpectrumIdsMatchingFullTextSearch(srb.getUserInput1());
+	}
+	
+	
 
 	
 }

@@ -24,14 +24,7 @@
 		</form>
 		
 		<input type="button" id="addButton" value="Add" title="Add"/>
-		
 		<input type="button" id="searchButton" value="Search" title="Search"/>
 		
-		<form id="searchResultForm" action="searchResult">
-			<input type="hidden" id="hCategory" name="category" />
-			<input type="hidden" id="hAttribute" name="attribute" />
-			<input type="hidden" id="hInput" name="input" />	
-		</form>
-	
 	</body>
 </html>

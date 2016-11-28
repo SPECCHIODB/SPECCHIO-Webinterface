@@ -1,6 +1,6 @@
 package ch.specchio.model;
 
-public class MetaDataObject {
+public class MetaDataBean {
 
 	
 	private String acquisitionTime;
@@ -9,7 +9,7 @@ public class MetaDataObject {
 	private String filename;
 	
 	
-	public MetaDataObject() {
+	public MetaDataBean() {
 	}
 
 	public String getFilename() {

@@ -10,6 +10,8 @@ import ch.specchio.client.SPECCHIOClientException;
 import ch.specchio.client.SPECCHIOClientFactory;
 import ch.specchio.client.SPECCHIOServerDescriptor;
 import ch.specchio.model.Attribute;
+import ch.specchio.queries.Query;
+import ch.specchio.queries.SpectrumQueryCondition;
 import ch.specchio.util.SpecchioUtil;
 
 public class Test {
@@ -22,12 +24,20 @@ public class Test {
 		SpecchioUtil util = new SpecchioUtil();
 		
 		
-		Attribute a = util.getAttribute("Sampling Environment", "Environmental Conditions");
+//		Attribute a = util.getAttribute("Sampling Environment", "Environmental Conditions");
+//		
+//		Hashtable<String, Integer> taxonomyHash = specchio_client.getTaxonomyHash(a.getId());
+//		for(String key : taxonomyHash.keySet()){
+//			System.out.println(key + " - " + taxonomyHash.get(key));
+//		}
 		
-		Hashtable<String, Integer> taxonomyHash = specchio_client.getTaxonomyHash(a.getId());
-		for(String key : taxonomyHash.keySet()){
-			System.out.println(key + " - " + taxonomyHash.get(key));
-		}
+		Query query = new Query();
+		SpectrumQueryCondition cond = new SpectrumQueryCondition("spectrum","measurement_unit_id"); 
+		cond.setValue("9"); 
+		cond.setOperator("="); 
+		query.add_condition(cond); 
+		List<Integer> ids = specchio_client.getSpectrumIdsMatchingQuery(query);
+		System.out.println(ids.size());
 		
 	}
 

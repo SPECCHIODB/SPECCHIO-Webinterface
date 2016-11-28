@@ -20,12 +20,13 @@ import ch.specchio.util.SpecchioUtil;
 @SuppressWarnings("serial")
 public class SearchServlet extends HttpServlet {
 
+	private SpecchioUtil util = new SpecchioUtil();
 	
 	private void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		int numberOfRows = req.getParameter("numberOfRows") != null ? Integer.valueOf(req.getParameter("numberOfRows")) : 0;
+		boolean doSearch = "true".equals(req.getParameter("doSearch"));
 		
-		SpecchioUtil util = new SpecchioUtil();
 		List<SearchRowBean> searchRowBeanList = new LinkedList<>();
 		
 		for(int i = 0; i < numberOfRows; i++){
@@ -57,12 +58,19 @@ public class SearchServlet extends HttpServlet {
 			searchRowBeanList.add(srb);
 		}
 		
-		req.setAttribute("categoryList", new Gson().toJson(util.getCategoryList()));
-		req.setAttribute("searchRowBeanList", new Gson().toJson(searchRowBeanList));
+		RequestDispatcher rd = null;
+		Gson gson = new Gson();
 		
+		if(doSearch) {
+			req.setAttribute("mdbList", gson.toJson(util.getSearchResult(searchRowBeanList)));
+			rd = req.getRequestDispatcher("/searchResult.jsp"); // show searchResult.jsp
+		}
+		else {
+			req.setAttribute("categoryList", gson.toJson(util.getCategoryList()));
+			req.setAttribute("searchRowBeanList", gson.toJson(searchRowBeanList));
+			rd = req.getRequestDispatcher("/search.jsp"); // show search.jsp
+		}
 		
-		// show search.jsp
-		RequestDispatcher rd = req.getRequestDispatcher("/search.jsp");
 		rd.forward(req, resp);
 	}
 	
