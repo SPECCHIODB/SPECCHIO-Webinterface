@@ -3,6 +3,8 @@ var doSearch = false;
 
 function init(){
 	
+	addTitleRow();
+	
 	if(searchRowBeanList.length == 0) {
 		addSearchRow(null);
 	}
@@ -14,20 +16,35 @@ function init(){
 	
 }
 
+function addTitleRow(){
+	var form = $("#searchForm");
+	form.append(createTitleRow());
+}
+
 function addSearchRow(srb){
 	var form = $("#searchForm");
 	form.append(createSearchRow(srb));
 	numberOfRows++;
 }
 
+function createTitleRow(){
+	var titleRow = $('<div class="row"></div>');
+	titleRow.append('<div class="col-lg-3"><label>Category</label></div>');
+	titleRow.append('<div class="col-lg-3"><label>Attribute</label></div>');
+	titleRow.append('<div class="col-lg-5"><label>Input</label></div>');
+	
+	return titleRow;
+}
+
 function createSearchRow(srb){
 
-    var searchRow = $('<div class="searchRow"></div>');
+    var searchRow = $('<div class="row"></div>');
     searchRow.append(createCategorySection(srb));
     if(srb != null && srb.selectedCategory.name != "Full Text Search") 
-    	searchRow.append(createAttributeSection(srb));
+    	searchRow.append(createAttributeSection(srb, ""));
+    else searchRow.append(createAttributeSection(srb, "disabled"));
     searchRow.append(createInputSection(srb));
-    var removeButton = $('<input type="button" value="x" title="Remove" />').click(function(){
+    var removeButton = $('<button type="button" title="Remove" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>').click(function(){
     	searchRow.remove();
     	submitSearchForm();
     });
@@ -37,12 +54,10 @@ function createSearchRow(srb){
 }
 
 function createCategorySection(srb){
-	var section = $('<section></section>');
-	var label = 'Category<br/>';
-	section.append(label);
+	var section = $('<section class="col-lg-3"></section>');
     
 	var rowNr = numberOfRows;
-	var select =  $('<select name="category_'+rowNr+'"></select>');
+	var select =  $('<select name="category_'+rowNr+'" class="btn btn-default dropdown-toggle"></select>');
     for(var i = 0; i < categoryList.length; i++){
     	var category = categoryList[i];
     	var selected = srb != null && srb.selectedCategory != null && category.name == srb.selectedCategory.name;
@@ -57,31 +72,29 @@ function createCategorySection(srb){
     return section;
 }
 
-function createAttributeSection(srb){
-	var section = $('<section></section>');
-	var label = 'Attribute<br/>';
-	section.append(label);
+function createAttributeSection(srb, disabled){
+	var section = $('<section class="col-lg-3"></section>');
 	
 	var rowNr = numberOfRows;
-    var select = $('<select name="attribute_'+rowNr+'"></select>');
-    for(var i = 0; i < srb.attributeList.length; i++){
-    	var attribute = srb.attributeList[i];
-    	var selected = srb != null && srb.selectedAttribute != null && attribute.name == srb.selectedAttribute.name;
-    	select.append(createOption(attribute.name, attribute.name, selected));
+    var select = $('<select name="attribute_'+rowNr+'" class="btn btn-default dropdown-toggle '+ disabled +'" '+ disabled +'></select>');
+    if(disabled == "") {
+	    for(var i = 0; i < srb.attributeList.length; i++){
+	    	var attribute = srb.attributeList[i];
+	    	var selected = srb != null && srb.selectedAttribute != null && attribute.name == srb.selectedAttribute.name;
+	    	select.append(createOption(attribute.name, attribute.name, selected));
+	    }
+	    select.change(function(){
+	    	clearUserInput(rowNr);
+	    	submitSearchForm();
+	    });
     }
-    select.change(function(){
-    	clearUserInput(rowNr);
-    	submitSearchForm();
-    });
     section.append(select);
     
     return section;
 }
 
 function createInputSection(srb){
-	var section = $('<section id="inputSection_'+numberOfRows+'"></section>');
-	var label = 'Input<br/>';
-	section.append(label);
+	var section = $('<section id="inputSection_'+numberOfRows+'" class="col-lg-5"></section>');
 	
 	var rowNr = numberOfRows;
 	var dsf = srb != null && srb.selectedAttribute != null ? srb.selectedAttribute.defaultStorageField : 'init';
@@ -89,19 +102,19 @@ function createInputSection(srb){
 	var userInput2 = srb != null && srb.userInput2 != undefined ? srb.userInput2 : "";
 	
 	if(dsf == 'init'){
-		section.append('<input type="text" name="userInput1_'+rowNr+'" />');
+		section.append('<input type="text" name="userInput1_'+rowNr+'" class="form-control" />');
 	}
 	else if(dsf == 'string_val'){
-		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'"/>');
+		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" class="form-control" />');
 	}
 	else if(dsf == 'int_val' || dsf == 'double_val'){
-		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'"/> - <input type="text" name="userInput2_'+rowNr+'" value="'+userInput2+'"/>');
+		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="from" class="form-control inputFrom"/><input type="text" name="userInput2_'+rowNr+'" value="'+userInput2+'" placeholder="to" class="form-control inputTo"/>');
 	}
 	else if(dsf == 'datetime_val'){
-		section.append('<input type="date" name="userInput1_'+rowNr+'" value="'+userInput1+'"/>');
+		section.append('<input type="date" name="userInput1_'+rowNr+'" value="'+userInput1+'" class="form-control" />');
 	}
 	else if(dsf == 'drop_down' || dsf == 'taxonomy_id'){
-		var select = $('<select name="userInput1_'+rowNr+'"></select>');
+		var select = $('<select name="userInput1_'+rowNr+'" class="btn btn-default dropdown-toggle"></select>');
 		for(var i = 0; i < srb.dropdownPairList.length; i++){
 			var pair = srb.dropdownPairList[i];
 			select.append(createOption(pair.first, pair.second, pair.first == userInput1));

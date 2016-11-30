@@ -166,6 +166,23 @@ public class SpecchioUtil {
 		return list;
 	}
 
+	public List<MetaDataBean> getSearchResultMockup(){
+		List<MetaDataBean> mdbList = new LinkedList<>();
+		
+		for(int i = 0; i < 5; i++){
+			MetaDataBean mdb = new MetaDataBean();
+			mdb.setAcquisitionTime(i+"");
+			mdb.setInvestigator("hansli"+i);
+			mdb.setCommon("name"+i);
+			mdb.setInstitute("institute"+i);
+			mdb.setFileName("file"+i);
+			mdb.setCampaignName("campaign"+i);
+			mdbList.add(mdb);
+		}
+		
+		return mdbList;
+	}
+	
 	public List<MetaDataBean> getSearchResult(List<SearchRowBean> searchRowBeanList) {
 		List<MetaDataBean> mdbList = new LinkedList<>();
 		List<Integer> ids = new LinkedList<>();
@@ -221,6 +238,9 @@ public class SpecchioUtil {
 		String setterName = "set" + attributeName;
 		setterName = setterName.replace(" ", "");
 		setterName = setterName.replace("%", "");
+		setterName = setterName.replace("(", "");
+		setterName = setterName.replace(")", "");
+		setterName = setterName.replace(".", "");
 		setterName = setterName.replace("-", "_");
 		setterName = setterName.replace("/", "_");
 		return setterName;

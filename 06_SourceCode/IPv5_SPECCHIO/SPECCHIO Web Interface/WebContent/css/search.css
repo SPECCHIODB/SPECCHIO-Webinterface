@@ -1,10 +1,57 @@
-.searchRow {
-	width: 100%;
-	float: left;
-	margin-top: 5px;
+/* SPECCHIO search CSS */
+
+body {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        background: none;
 }
 
-section {
-	float: left;
-	margin-right: 5px;
+.full {
+  background: url(../img/bg.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.btnMoreWidth {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.jumbotron {
+    margin-top: 10px;
+    background: rgba(0, 0, 0, 0.7)
+}
+
+.jumbotron h1, label {
+    color: #ffffff;
+    text-align: center;
+}
+
+.jumbotron p {
+    color: #ffffff;
+    text-align: center;
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+}
+
+.dropdown-toggle{
+	width: 100%;
+	text-align: left;
+}
+
+.inputFrom {
+	display: inline;
+	width: 49%;
+}
+
+.inputTo {
+	display: inline;
+	width: 49%;
+	margin-left: 2%;
+}
+
+.row {
+	margin-bottom: 10px;
 }
