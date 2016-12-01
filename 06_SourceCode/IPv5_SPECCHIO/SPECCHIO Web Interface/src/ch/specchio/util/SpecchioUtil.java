@@ -2,9 +2,11 @@ package ch.specchio.util;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import ch.specchio.client.SPECCHIOClient;
 import ch.specchio.client.SPECCHIOClientFactory;
@@ -67,6 +69,20 @@ public class SpecchioUtil {
 			if(name != null && name.equals(c.getName())) return c;
 		}
 		return null;
+	}
+	
+	private Map<String, List<Pair<String,String>>> createCategoryAttributesMap(){
+		Map<String, List<Pair<String,String>>> categoryAttributesMap = new HashMap<>();
+
+		for(Category c : getCategoryList()){
+			List<Pair<String,String>> attributeNameList = new LinkedList<>();
+			for(Attribute a : getAttributeList(c)){
+				attributeNameList.add(new Pair<String, String>(a.getName(), getFieldName(a.getName())));
+			}
+			categoryAttributesMap.put(c.getName(), attributeNameList);
+		}
+		
+		return categoryAttributesMap;
 	}
 	
 	public List<Attribute> getAttributeList(String category){
@@ -186,7 +202,9 @@ public class SpecchioUtil {
 	public List<MetaDataBean> getSearchResult(List<SearchRowBean> searchRowBeanList) {
 		List<MetaDataBean> mdbList = new LinkedList<>();
 		List<Integer> ids = new LinkedList<>();
-		Query query = new Query();
+		Query query = new Query("spectrum"); 
+		query.addColumn("spectrum_id");
+		query.setQueryType(Query.SELECT_QUERY); 
 		boolean fulltextsearch = false;
 		
 		for(SearchRowBean srb : searchRowBeanList){
@@ -202,10 +220,11 @@ public class SpecchioUtil {
 			else { // Other Categories
 				addEAVQueryCondition(query, srb);
 			}
-			
+			Spectrum s = new Spectrum();
 		}
 		if (!fulltextsearch) ids = specchio_client.getSpectrumIdsMatchingQuery(query);
 		
+		System.out.println(ids.size());
 		
 		Space[] spaces = specchio_client.getSpaces((ArrayList<Integer>) ids, "Acquisition Time");
 		for(Space s : spaces){
@@ -222,7 +241,8 @@ public class SpecchioUtil {
 		List<MetaDataBean> mdbList = new LinkedList<>();
 		
 		for (int i = 0; i < ids.size(); i++){
-			mdbList.add(new MetaDataBean(space));
+//			mdbList.add(new MetaDataBean(space));
+			mdbList.add(new MetaDataBean());
 		}
 		
 		for(String attributeName : specchio_client.getAttributesNameHash().keySet()){
@@ -235,15 +255,27 @@ public class SpecchioUtil {
 	}
 	
 	private String getSetterName(String attributeName){
-		String setterName = "set" + attributeName;
-		setterName = setterName.replace(" ", "");
-		setterName = setterName.replace("%", "");
-		setterName = setterName.replace("(", "");
-		setterName = setterName.replace(")", "");
-		setterName = setterName.replace(".", "");
-		setterName = setterName.replace("-", "_");
-		setterName = setterName.replace("/", "_");
-		return setterName;
+		return "set" + replaceCharactersFromAttributeName(attributeName);
+	}
+	
+	private String getFieldName(String attributeName){
+		String fieldName = replaceCharactersFromAttributeName(attributeName);
+		if(!fieldName.isEmpty()){
+			fieldName = fieldName.substring(0,1).toLowerCase() + fieldName.substring(1);
+		}
+		return fieldName;
+	}
+	
+	private String replaceCharactersFromAttributeName(String attributeName){
+		if(attributeName == null) return "";
+		attributeName = attributeName.replace(" ", "");
+		attributeName = attributeName.replace("%", "");
+		attributeName = attributeName.replace("(", "");
+		attributeName = attributeName.replace(")", "");
+		attributeName = attributeName.replace(".", "");
+		attributeName = attributeName.replace("-", "_");
+		attributeName = attributeName.replace("/", "_");
+		return attributeName;
 	}
 	
 	private void fillMetaParameterSpecialCases(List<Integer> ids, List<MetaDataBean> mdbList){
@@ -257,8 +289,10 @@ public class SpecchioUtil {
 			if(campaign != null) { 
 			mdb.setCampaignName(campaign.getName()); // Campaign Name
 				if(campaign.getUser() != null){
-					mdb.setUser(campaign.getUser().getUsername()); // Username
-					mdb.setInstitute(campaign.getUser().getInstitute().getInstituteName()); // Institute
+					mdb.setUser(campaign.getUser().getFirstName() + " " + campaign.getUser().getLastName()); // Username
+					if(campaign.getUser().getInstitute() != null){
+						mdb.setInstitute(campaign.getUser().getInstitute().getInstituteName()); // Institute
+					}
 				}
 			}
 		}
@@ -330,7 +364,7 @@ public class SpecchioUtil {
 				break;
 		}
 		
-		SpectrumQueryCondition cond = new SpectrumQueryCondition("spectrum",idType); 
+		SpectrumQueryCondition cond = new SpectrumQueryCondition("spectrum", idType); 
 		cond.setValue(srb.getUserInput1()); 
 		cond.setOperator("="); 
 		query.add_condition(cond); 
@@ -339,8 +373,9 @@ public class SpecchioUtil {
 	private List<Integer> doFullTextSearch(SearchRowBean srb) {
 		return specchio_client.getSpectrumIdsMatchingFullTextSearch(srb.getUserInput1());
 	}
-	
-	
 
+	public Map<String, List<Pair<String,String>>> getCategoryAttributesMap() {
+		return createCategoryAttributesMap();
+	}
 	
 }

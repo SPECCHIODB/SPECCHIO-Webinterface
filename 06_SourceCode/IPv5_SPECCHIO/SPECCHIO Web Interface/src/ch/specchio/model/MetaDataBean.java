@@ -1,10 +1,9 @@
 package ch.specchio.model;
 
-import ch.specchio.spaces.SpectralSpace;
 
 public class MetaDataBean {
 
-	private SpectralSpace space;
+	//private SpectralSpace space;
 
 	//	--- Displayed in Result List ---
 	
@@ -16,8 +15,8 @@ public class MetaDataBean {
   	private String institute;
   	
   	// --- Others ---
-  	
-  	private String common;
+
+	private String common;
   	private String latin;
   	private String user;
   	private String agencyCode;
@@ -41,7 +40,7 @@ public class MetaDataBean {
   	private String loadingTime;
   	private String rawDataFormat;
   	private String spectrumNumber;
-  	private String CORINELandcover;
+  	private String cORINELandcover;
   	private String sampleCollectionDate;
   	private String sampleNumber;
   	private String siteID;
@@ -94,7 +93,7 @@ public class MetaDataBean {
   	private String dyAR;
   	private String dyICP_MS;
   	private String dyMMI_ME;
-  	private String EC;
+  	private String eC;
   	private String erAR;
   	private String erICP_MS;
   	private String erMMI_ME;
@@ -105,7 +104,7 @@ public class MetaDataBean {
   	private String feAR;
   	private String feMMI_ME;
   	private String feTXRF;
-  	private String FIELDpH;
+  	private String fIELDpH;
   	private String gaAR;
   	private String gaICP_MS;
   	private String gaMMI_ME;
@@ -130,7 +129,7 @@ public class MetaDataBean {
   	private String laMMI_ME;
   	private String liAR;
   	private String liMMI_ME;
-  	private String LOICalc;
+  	private String lOICalc;
   	private String luAR;
   	private String luICP_MS;
   	private String mgAR;
@@ -257,8 +256,8 @@ public class MetaDataBean {
   	private String locationName;
   	private String longitude;
   	private String state;
-  	private String ENVIHdr;
-  	private String FOV;
+  	private String eNVIHdr;
+  	private String fOV;
   	private String opticsName;
   	private String experimentalDesign;
   	private String fieldProtocol;
@@ -267,7 +266,7 @@ public class MetaDataBean {
   	private String skyPicture;
   	private String targetPicture;
   	private String dataIngestionNotes;
-  	private String DCFlag;
+  	private String dCFlag;
   	private String garbageFlag;
   	private String processingAlgorithm;
   	private String processingLevel;
@@ -285,16 +284,16 @@ public class MetaDataBean {
   	private String publication;
   	private String airDryWaterContent;
   	private String airDryWaterContentMethod;
-  	private String ASCOrder;
-  	private String ASCSub_Order;
+  	private String aSCOrder;
+  	private String aSCSub_Order;
   	private String availableP;
   	private String availablePMethod;
   	private String bulkDensity;
   	private String bulkDensityMethod;
   	private String carbon;
   	private String carbonMethod;
-  	private String CEC;
-  	private String CECMethod;
+  	private String cEC;
+  	private String cECMethod;
   	private String clay;
   	private String clayMethod;
   	private String coarseSand;
@@ -355,7 +354,7 @@ public class MetaDataBean {
   	private String approxCrownDiameter;
   	private String chlorophyllContent;
   	private String crownClassFPMRIS;
-  	private String DBH;
+  	private String dBH;
   	private String dryWeight;
   	private String height;
   	private String leafArea;
@@ -368,11 +367,12 @@ public class MetaDataBean {
 	public MetaDataBean() {
 	}
 	
-	public MetaDataBean(SpectralSpace space) {
-		this.space = space;
-	}
+//	public MetaDataBean(SpectralSpace space) {
+//		this.space = space;
+//	}
 	
 	public String getInvestigator() {
+		System.out.println(investigator);
 		return investigator != null && !investigator.isEmpty() ? investigator : user;
 	}
 
@@ -404,13 +404,13 @@ public class MetaDataBean {
 		this.fileName = fileName;
 	}
 
-	public SpectralSpace getSpace() {
-		return space;
-	}
-
-	public void setSpace(SpectralSpace space) {
-		this.space = space;
-	}
+//	public SpectralSpace getSpace() {
+//		return space;
+//	}
+//
+//	public void setSpace(SpectralSpace space) {
+//		this.space = space;
+//	}
 	
 	public String getAcquisitionTime() {
 		return acquisitionTime;
@@ -627,11 +627,11 @@ public class MetaDataBean {
 	}
 
 	public String getCORINELandcover() {
-		return CORINELandcover;
+		return cORINELandcover;
 	}
 
 	public void setCORINELandcover(String cORINELandcover) {
-		CORINELandcover = cORINELandcover;
+		this.cORINELandcover = cORINELandcover;
 	}
 
 	public String getSampleCollectionDate() {
@@ -1051,11 +1051,11 @@ public class MetaDataBean {
 	}
 
 	public String getEC() {
-		return EC;
+		return eC;
 	}
 
 	public void setEC(String eC) {
-		EC = eC;
+		this.eC = eC;
 	}
 
 	public String getErAR() {
@@ -1139,11 +1139,11 @@ public class MetaDataBean {
 	}
 
 	public String getFIELDpH() {
-		return FIELDpH;
+		return fIELDpH;
 	}
 
 	public void setFIELDpH(String fIELDpH) {
-		FIELDpH = fIELDpH;
+		this.fIELDpH = fIELDpH;
 	}
 
 	public String getGaAR() {
@@ -1339,11 +1339,11 @@ public class MetaDataBean {
 	}
 
 	public String getLOICalc() {
-		return LOICalc;
+		return lOICalc;
 	}
 
 	public void setLOICalc(String lOICalc) {
-		LOICalc = lOICalc;
+		this.lOICalc = lOICalc;
 	}
 
 	public String getLuAR() {
@@ -2356,19 +2356,19 @@ public class MetaDataBean {
 	}
 
 	public String getENVIHdr() {
-		return ENVIHdr;
+		return eNVIHdr;
 	}
 
 	public void setENVIHdr(String eNVIHdr) {
-		ENVIHdr = eNVIHdr;
+		this.eNVIHdr = eNVIHdr;
 	}
 
 	public String getFOV() {
-		return FOV;
+		return fOV;
 	}
 
 	public void setFOV(String fOV) {
-		FOV = fOV;
+		this.fOV = fOV;
 	}
 
 	public String getOpticsName() {
@@ -2436,11 +2436,11 @@ public class MetaDataBean {
 	}
 
 	public String getDCFlag() {
-		return DCFlag;
+		return dCFlag;
 	}
 
 	public void setDCFlag(String dCFlag) {
-		DCFlag = dCFlag;
+		this.dCFlag = dCFlag;
 	}
 
 	public String getGarbageFlag() {
@@ -2580,19 +2580,19 @@ public class MetaDataBean {
 	}
 
 	public String getASCOrder() {
-		return ASCOrder;
+		return aSCOrder;
 	}
 
 	public void setASCOrder(String aSCOrder) {
-		ASCOrder = aSCOrder;
+		this.aSCOrder = aSCOrder;
 	}
 
 	public String getASCSub_Order() {
-		return ASCSub_Order;
+		return aSCSub_Order;
 	}
 
 	public void setASCSub_Order(String aSCSub_Order) {
-		ASCSub_Order = aSCSub_Order;
+		this.aSCSub_Order = aSCSub_Order;
 	}
 
 	public String getAvailableP() {
@@ -2644,19 +2644,19 @@ public class MetaDataBean {
 	}
 
 	public String getCEC() {
-		return CEC;
+		return cEC;
 	}
 
 	public void setCEC(String cEC) {
-		CEC = cEC;
+		this.cEC = cEC;
 	}
 
 	public String getCECMethod() {
-		return CECMethod;
+		return cECMethod;
 	}
 
 	public void setCECMethod(String cECMethod) {
-		CECMethod = cECMethod;
+		this.cECMethod = cECMethod;
 	}
 
 	public String getClay() {
@@ -3141,11 +3141,11 @@ public class MetaDataBean {
 	}
 
 	public String getDBH() {
-		return DBH;
+		return dBH;
 	}
 
 	public void setDBH(String dBH) {
-		DBH = dBH;
+		this.dBH = dBH;
 	}
 
 	public String getDryWeight() {

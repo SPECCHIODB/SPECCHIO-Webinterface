@@ -63,8 +63,8 @@ public class SearchServlet extends HttpServlet {
 		Gson gson = new Gson();
 		
 		if(doSearch) {
-			req.setAttribute("mdbList", gson.toJson(util.getSearchResultMockup()));	// TODO: remove mockup
-			//req.setAttribute("mdbList", gson.toJson(util.getSearchResult(searchRowBeanList)));
+			//req.setAttribute("mdbList", gson.toJson(util.getSearchResultMockup()));	// TODO: remove mockup
+			req.setAttribute("mdbList", gson.toJson(util.getSearchResult(searchRowBeanList)));
 			rd = req.getRequestDispatcher("/searchResult.jsp"); // show searchResult.jsp
 		}
 		else {

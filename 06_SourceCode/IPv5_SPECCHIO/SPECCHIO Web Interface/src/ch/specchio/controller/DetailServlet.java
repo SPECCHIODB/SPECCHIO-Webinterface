@@ -1,6 +1,8 @@
 package ch.specchio.controller;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.LinkedList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -8,18 +10,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import antlr.collections.List;
 import ch.specchio.model.MetaDataBean;
 import ch.specchio.util.SpecchioUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
-import java.util.LinkedList;
-
 @SuppressWarnings("serial")
-public class SearchResultServlet extends HttpServlet {
+public class DetailServlet extends HttpServlet {
 
 	
 	private void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -36,8 +34,8 @@ public class SearchResultServlet extends HttpServlet {
 			
 		}
 		
-		
 		req.setAttribute("metaDataBeanList", new Gson().toJson(mdbList));
+		req.setAttribute("categoryAttributesMap", new Gson().toJson(util.getCategoryAttributesMap()));
 		
 		RequestDispatcher rd = req.getRequestDispatcher("/detail.jsp");
 		rd.forward(req, resp);

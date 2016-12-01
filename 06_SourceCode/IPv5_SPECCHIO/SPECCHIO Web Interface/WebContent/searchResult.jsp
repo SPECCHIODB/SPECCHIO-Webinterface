@@ -9,9 +9,10 @@
 		
 		<!-- Bootstrap core CSS -->
     	<link href="css/bootstrap.min.css" rel="stylesheet">
-    
+    	
     	<!-- Custom styles for this template -->
-    	<link href="css/search.css" rel="stylesheet">
+    	<link href="css/searchResult.css" rel="stylesheet">
+    
 	</head>
 	<body>
 		<%@ include file="nav.html" %>
@@ -36,7 +37,7 @@
 			
 			<input type="button" id="showDetail" value="Show Detail" title="Show Detail" class="btn btn-lg btn-success btnMoreWidth"/>
 		</div>
-		<form id="searchResultForm" action="searchResult"> 
+		<form id="detailForm"  method="post" action="detail"> 
 			<!-- jQuery adds hiddenfield here -->
 		</form>
 		

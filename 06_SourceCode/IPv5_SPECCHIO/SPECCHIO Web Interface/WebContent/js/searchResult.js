@@ -50,7 +50,7 @@ $(document).ready(function() {
 			index++;
 		});
 		
-		var form = $("#searchResultForm");
+		var form = $("#detailForm");
 		
 		// replacing " with ' because of conflicts in servlet (/g = replace all ")
 		var json = JSON.stringify(selectedMetaDataBeanList).replace(/"/g, "'"); 

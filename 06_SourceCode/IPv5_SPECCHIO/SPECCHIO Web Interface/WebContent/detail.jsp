@@ -12,12 +12,17 @@
     	<link href="css/bootstrap.min.css" rel="stylesheet">
     
     	<!-- Custom styles for this template -->
-    	<link href="css/search.css" rel="stylesheet">
+    	<link href="css/detail.css" rel="stylesheet">
     
 	</head>
 	<body>
+		<%@ include file="nav.html" %>
 	
-		HERRO
+		<div id="categories" class="container">
+		
+		</div>
+	
+		<%@ include file="footer.html" %>
 	
 		<!-- js imports -->
 		<script src="js/jquery-2.1.4.min.js"></script>
@@ -26,6 +31,7 @@
         
 		<script type="text/javascript">
 			var metaDataBeanList = ${metaDataBeanList};
+			var categoryAttributesMap = ${categoryAttributesMap};
 		</script> 
 	</body>
 </html>

@@ -23,7 +23,12 @@
 		
 			<div class="jumbotron">
 			
-				<form id="searchForm" action="search">
+				<h1>SPECCHIO</h1>
+				<p>Spectral Library</p>	
+				
+				<br/>			
+			
+				<form id="searchForm" method="post" action="search">
 					<!-- jQuery adds searchRows dynamically here. -->
 				</form>
 				
