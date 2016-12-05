@@ -30,7 +30,7 @@
         <script src="js/bootstrap.min.js"></script>
         
 		<script type="text/javascript">
-			var metaDataBeanList = ${metaDataBeanList};
+			var searchResultBeanList = ${searchResultBeanList};
 			var categoryAttributesMap = ${categoryAttributesMap};
 		</script> 
 	</body>

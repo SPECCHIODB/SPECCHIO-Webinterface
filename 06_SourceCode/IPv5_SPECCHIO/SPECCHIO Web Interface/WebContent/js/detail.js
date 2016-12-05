@@ -1,7 +1,7 @@
 function init(){
 	
-	if(metaDataBeanList.length == 1){
-		displaySingleAttributeDetail(metaDataBeanList[0]);
+	if(searchResultBeanList.length == 1){
+		displaySingleAttributeDetail(searchResultBeanList[0]);
 	}
 	
 	
@@ -9,7 +9,7 @@ function init(){
 	
 }
 
-function displaySingleAttributeDetail(mdb){
+function displaySingleAttributeDetail(srb){
 	var categories = $("#categories");
 	
 	var categoryCount = 0;
@@ -27,7 +27,7 @@ function displaySingleAttributeDetail(mdb){
 			var attribute = attributeList[i];
 			var displayName = attribute.first;
 			var fieldName = attribute.second;
-			var value = mdb[fieldName];
+			var value = srb[fieldName];
 			
 			if(value != undefined && value != ""){
 				tbody.append('<tr><td>'+displayName+':</td><td>'+value+'</td></tr>');

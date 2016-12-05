@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 
 import ch.specchio.model.Attribute;
-import ch.specchio.model.MetaDataBean;
+import ch.specchio.model.SearchResultBean;
 import ch.specchio.model.SearchRowBean;
 import ch.specchio.util.SpecchioUtil;
 
@@ -63,8 +63,7 @@ public class SearchServlet extends HttpServlet {
 		Gson gson = new Gson();
 		
 		if(doSearch) {
-			//req.setAttribute("mdbList", gson.toJson(util.getSearchResultMockup()));	// TODO: remove mockup
-			req.setAttribute("mdbList", gson.toJson(util.getSearchResult(searchRowBeanList)));
+			req.setAttribute("srbList", gson.toJson(util.getSearchResultList(searchRowBeanList)));
 			rd = req.getRequestDispatcher("/searchResult.jsp"); // show searchResult.jsp
 		}
 		else {

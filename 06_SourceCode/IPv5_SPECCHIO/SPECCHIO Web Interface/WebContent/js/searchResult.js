@@ -1,26 +1,27 @@
 function init(){
 	
-	for(var i = 0; i < metaDataBeanList.length; i++){
-		addTableRow(i, metaDataBeanList[i]);
+	alert(searchResultBeanList.length);
+	for(var i = 0; i < searchResultBeanList.length; i++){
+		addTableRow(i, searchResultBeanList[i]);
 	}
 	
 }
 
-function addTableRow(index, mdb){
+function addTableRow(index, srb){
 	var tbody = $("tbody");
-	tbody.append(createTableRow(index, mdb));
+	tbody.append(createTableRow(index, srb));
 }
 
-function createTableRow(index, mdb){
+function createTableRow(index, srb){
 	var tableRow = $('<tr></tr>');
 	
 	tableRow.append('<td><input type="checkbox" value="'+index+'"/></td>');
-	tableRow.append(createTableData(tableRow, mdb.acquisitionTime));
-	tableRow.append(createTableData(tableRow, mdb.campaignName));
-	tableRow.append(createTableData(tableRow, mdb.investigator));
-	tableRow.append(createTableData(tableRow, mdb.common));
-	tableRow.append(createTableData(tableRow, mdb.fileName));
-	tableRow.append(createTableData(tableRow, mdb.institute));
+	tableRow.append(createTableData(tableRow, srb.acquisitionTime));
+	tableRow.append(createTableData(tableRow, srb.campaignName));
+	tableRow.append(createTableData(tableRow, srb.investigator));
+	tableRow.append(createTableData(tableRow, srb.name));
+	tableRow.append(createTableData(tableRow, srb.fileName));
+	tableRow.append(createTableData(tableRow, srb.institute));
 	
 	return tableRow;
 }
@@ -42,20 +43,22 @@ $(document).ready(function() {
 	
 	$("#showDetail").click(function(){
 		
-		var selectedMetaDataBeanList = [$("tbody input:checkbox:checked").length];
+		var selectedSearchResultBeanList = [$("tbody input:checkbox:checked").length];
 		var index = 0;
 		
 		$("tbody input:checkbox:checked").each(function(){
-			selectedMetaDataBeanList[index] = metaDataBeanList[this.value];
+			selectedSearchResultBeanList[index] = searchResultBeanList[this.value];
 			index++;
 		});
+		
+		alert(selectedSearchResultBeanList.length);
 		
 		var form = $("#detailForm");
 		
 		// replacing " with ' because of conflicts in servlet (/g = replace all ")
-		var json = JSON.stringify(selectedMetaDataBeanList).replace(/"/g, "'"); 
+		var json = JSON.stringify(selectedSearchResultBeanList).replace(/"/g, "'"); 
 		
-		form.append('<input type="hidden" name="selectedMetaDataBeanList" value="'+json+'"/>');
+		form.append('<input type="hidden" name="selectedSearchResultBeanList" value="'+json+'"/>');
 		form.submit();
 	});
 	

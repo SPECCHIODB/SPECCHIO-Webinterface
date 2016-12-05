@@ -48,7 +48,7 @@
         <script src="js/bootstrap.min.js"></script>
         
 		<script type="text/javascript">
-			var metaDataBeanList = ${mdbList};
+			var searchResultBeanList = ${srbList};
 		</script> 
 
 		<%@ include file="footer.html" %>

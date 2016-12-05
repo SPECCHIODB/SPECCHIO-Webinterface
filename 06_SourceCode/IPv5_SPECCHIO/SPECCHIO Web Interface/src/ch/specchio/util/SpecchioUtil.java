@@ -2,6 +2,7 @@ package ch.specchio.util;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -15,14 +16,17 @@ import ch.specchio.model.Attribute;
 import ch.specchio.model.Category;
 import ch.specchio.model.MetaDataBean;
 import ch.specchio.model.Pair;
+import ch.specchio.model.SearchResultBean;
 import ch.specchio.model.SearchRowBean;
 import ch.specchio.queries.EAVQueryConditionObject;
 import ch.specchio.queries.Query;
+import ch.specchio.queries.QueryCondition;
 import ch.specchio.queries.SpectrumQueryCondition;
 import ch.specchio.spaces.Space;
 import ch.specchio.spaces.SpectralSpace;
 import ch.specchio.types.Campaign;
 import ch.specchio.types.CategoryTable;
+import ch.specchio.types.ConflictTable;
 import ch.specchio.types.InstrumentDescriptor;
 import ch.specchio.types.MatlabAdaptedArrayList;
 import ch.specchio.types.Sensor;
@@ -31,12 +35,12 @@ import ch.specchio.types.attribute;
 
 public class SpecchioUtil {
 
-	private final String FIRST_CATEGORY 	= "Full Text Search";
-	private final String SECOND_CATEGORY 	= "Most Wanted";
+	private final String FULL_TEXT_SEARCH 		= "Full Text Search";
+	private final String MOST_WANTED	 		= "Most Wanted";
 	
-	private final String MOST_WANTED_1 		= "Measurement Unit ID";
-	private final String MOST_WANTED_2 		= "Sensor ID";
-	private final String MOST_WANTED_3 		= "Instrument ID";
+	private final String MEASUREMENT_UNIT_ID	= "Measurement Unit ID";
+	private final String SENSOR_ID		 		= "Sensor ID";
+	private final String INSTRUMENT_ID	 		= "Instrument ID";
 	
 	private SPECCHIOClient specchio_client;
 	
@@ -53,10 +57,18 @@ public class SpecchioUtil {
 		this.specchio_client = cf.createClient(db_descriptor_list.get(0));
 	}
 	
+	private Map<String, String> createSpectrumQueryConditionMap(){
+		Map<String, String> spectrumQueryConditionMap = new HashMap<>();
+		spectrumQueryConditionMap.put(MEASUREMENT_UNIT_ID, "measurement_unit_id");
+		spectrumQueryConditionMap.put(SENSOR_ID, "sensor_id");
+		spectrumQueryConditionMap.put(INSTRUMENT_ID, "instrument_id");
+		return spectrumQueryConditionMap;
+	}
+	
 	public List<Category> getCategoryList(){
 		List<Category> categoryList = new LinkedList<>();
-		categoryList.add(new Category(FIRST_CATEGORY));
-		categoryList.add(new Category(SECOND_CATEGORY));
+		categoryList.add(new Category(FULL_TEXT_SEARCH));
+		categoryList.add(new Category(MOST_WANTED));
 		
 		for(ch.specchio.types.Category c : specchio_client.getCategoriesInfo())
 			categoryList.add(new Category(c));
@@ -88,12 +100,12 @@ public class SpecchioUtil {
 	public List<Attribute> getAttributeList(String category){
 		attribute[] attributes = {};
 		
-		if(FIRST_CATEGORY.equals(category)){	// Full Text Search
+		if(FULL_TEXT_SEARCH.equals(category)){
 			List<Attribute> list = new LinkedList<>();
 			list.add(new Attribute("","string_val"));
 			return list;
 		}
-		else if(SECOND_CATEGORY.equals(category)){	// Most Wanted
+		else if(MOST_WANTED.equals(category)){
 			return getMostWantedAttributes();
 		}
 		else attributes = specchio_client.getAttributesForCategory(category);
@@ -123,9 +135,9 @@ public class SpecchioUtil {
 	
 	private List<Attribute> getMostWantedAttributes(){
 		List<Attribute> attributeList = new LinkedList<>();
-		attributeList.add(new Attribute(MOST_WANTED_1, "drop_down"));
-		attributeList.add(new Attribute(MOST_WANTED_2, "drop_down"));
-		attributeList.add(new Attribute(MOST_WANTED_3, "drop_down"));
+		attributeList.add(new Attribute(MEASUREMENT_UNIT_ID, "drop_down"));
+		attributeList.add(new Attribute(SENSOR_ID, "drop_down"));
+		attributeList.add(new Attribute(INSTRUMENT_ID, "drop_down"));
 		
 		return attributeList;
 	}
@@ -134,13 +146,13 @@ public class SpecchioUtil {
 		List<Pair<String,String>> list = new LinkedList<Pair<String,String>>();
 			
 		switch(attr.getName()){
-			case MOST_WANTED_1:
+			case MEASUREMENT_UNIT_ID:
 				list = getMeasurementUnitList();
 				break;
-			case MOST_WANTED_2:
+			case SENSOR_ID:
 				list = getSensorList();
 				break;
-			case MOST_WANTED_3:
+			case INSTRUMENT_ID:
 				list = getInstrumentList();
 				break;
 		}
@@ -182,77 +194,149 @@ public class SpecchioUtil {
 		return list;
 	}
 
-	public List<MetaDataBean> getSearchResultMockup(){
-		List<MetaDataBean> mdbList = new LinkedList<>();
+	public List<SearchResultBean> getSearchResultList(List<SearchRowBean> searchRowBeanList){
+		List<SearchResultBean> srbList = new LinkedList<>();
 		
-		for(int i = 0; i < 5; i++){
-			MetaDataBean mdb = new MetaDataBean();
-			mdb.setAcquisitionTime(i+"");
-			mdb.setInvestigator("hansli"+i);
-			mdb.setCommon("name"+i);
-			mdb.setInstitute("institute"+i);
-			mdb.setFileName("file"+i);
-			mdb.setCampaignName("campaign"+i);
-			mdbList.add(mdb);
-		}
+		if(searchRowBeanList == null || searchRowBeanList.isEmpty()) return srbList;
 		
-		return mdbList;
-	}
-	
-	public List<MetaDataBean> getSearchResult(List<SearchRowBean> searchRowBeanList) {
-		List<MetaDataBean> mdbList = new LinkedList<>();
-		List<Integer> ids = new LinkedList<>();
-		Query query = new Query("spectrum"); 
-		query.addColumn("spectrum_id");
-		query.setQueryType(Query.SELECT_QUERY); 
-		boolean fulltextsearch = false;
+		List<List<Integer>> fullTextSearchResultList = new LinkedList<>();
+		List<QueryCondition> queryConditionList = new LinkedList<>();
 		
 		for(SearchRowBean srb : searchRowBeanList){
 			
-			if(FIRST_CATEGORY.equals(srb.getSelectedCategory().getName())){ // Full Text Search
-				ids = doFullTextSearch(srb); // TODO: kann fts in kombination mit anderen auftreten?
-				fulltextsearch = true;
-				break;
+			if(srb != null && srb.getSelectedCategory() != null){
+				if(FULL_TEXT_SEARCH.equals(srb.getSelectedCategory().getName())){
+					fullTextSearchResultList.add(doFullTextSearch(srb));
+				}
+				else if(srb.getSelectedAttribute() != null){
+					Map<String, String> spectrumQueryConditionMap = createSpectrumQueryConditionMap();
+					if(spectrumQueryConditionMap.containsKey(srb.getSelectedAttribute())){
+						queryConditionList.add(createSpectrumQueryCondition(srb, spectrumQueryConditionMap.get(srb.getSelectedAttribute())));
+					}
+					else{
+						queryConditionList.addAll(createEAVQueryCondition(srb));
+					}
+				}
 			}
-			else if(SECOND_CATEGORY.equals(srb.getSelectedCategory().getName())){ // Most Wanted
-				addSpectrumQueryCondition(query, srb);
-			}
-			else { // Other Categories
-				addEAVQueryCondition(query, srb);
-			}
-			Spectrum s = new Spectrum();
+			
 		}
-		if (!fulltextsearch) ids = specchio_client.getSpectrumIdsMatchingQuery(query);
 		
-		System.out.println(ids.size());
+		List<Integer> ids = null;
+		if(fullTextSearchResultList.size() == 1 && queryConditionList.isEmpty()){
+			ids = fullTextSearchResultList.get(0);
+		}
+		else {
+			Query query = new Query("spectrum"); 
+			query.addColumn("spectrum_id");
+			query.setQueryType(Query.SELECT_QUERY); 
+			
+			// Always do FullTextSearch first
+			for(List<Integer> idList : fullTextSearchResultList){
+				QueryCondition cond = createFullTextSearchCondition(query, idList);
+				query.add_join("spectrum", cond);
+				query.add_condition(cond);
+			}
+			
+			for(QueryCondition cond : queryConditionList){
+				query.add_condition(cond);
+			}
+			ids = specchio_client.getSpectrumIdsMatchingQuery(query);
+		}
 		
 		Space[] spaces = specchio_client.getSpaces((ArrayList<Integer>) ids, "Acquisition Time");
 		for(Space s : spaces){
 			SpectralSpace space = (SpectralSpace) s;
 			ids = space.getSpectrumIds(); // get them sorted by 'Acquisition Time'
 			space = (SpectralSpace) specchio_client.loadSpace(space);
-			mdbList.addAll(createMetaDataBeanList(ids, space));
+			
+			
+			srbList.addAll(createSearchResultBeanList(ids, space));
 		}
 		
-		return mdbList;
+		return srbList;
 	}
-
+	
+//	public List<SearchResultBean> getSearchResult(List<SearchRowBean> searchRowBeanList) {
+//		List<SearchResultBean> srbList = new LinkedList<>();
+//		List<Integer> ids = new LinkedList<>();
+//		Query query = new Query("spectrum"); 
+//		query.addColumn("spectrum_id");
+//		query.setQueryType(Query.SELECT_QUERY); 
+//		boolean fulltextsearch = false;
+//		
+//		for(SearchRowBean srb : searchRowBeanList){
+//			
+//			if(FIRST_CATEGORY.equals(srb.getSelectedCategory().getName())){ // Full Text Search
+//				ids = doFullTextSearch(srb); // TODO: kann fts in kombination mit anderen auftreten?
+//				fulltextsearch = true;
+//				break;
+//			}
+//			else if(SECOND_CATEGORY.equals(srb.getSelectedCategory().getName())){ // Most Wanted
+//				addSpectrumQueryCondition(query, srb);
+//			}
+//			else { // Other Categories
+//				addEAVQueryCondition(query, srb);
+//			}
+//			Spectrum s = new Spectrum();
+//		}
+//		if (!fulltextsearch) ids = specchio_client.getSpectrumIdsMatchingQuery(query);
+//		
+//		System.out.println(ids.size());
+//		
+//		Space[] spaces = specchio_client.getSpaces((ArrayList<Integer>) ids, "Acquisition Time");
+//		for(Space s : spaces){
+//			SpectralSpace space = (SpectralSpace) s;
+//			ids = space.getSpectrumIds(); // get them sorted by 'Acquisition Time'
+//			space = (SpectralSpace) specchio_client.loadSpace(space);
+//			srbList.addAll(createSearchResultBeanList(ids, space));
+//		}
+//		
+//		return srbList;
+//	}
+	
 	private List<MetaDataBean> createMetaDataBeanList(List<Integer> ids, SpectralSpace space){
 		List<MetaDataBean> mdbList = new LinkedList<>();
 		
-		for (int i = 0; i < ids.size(); i++){
-//			mdbList.add(new MetaDataBean(space));
-			mdbList.add(new MetaDataBean());
+		for (Integer id : ids){
+//			srbList.add(new SearchResultBean(space));
+			srbList.add(new SearchResultBean(id));
 		}
 		
-		for(String attributeName : specchio_client.getAttributesNameHash().keySet()){
-			fillMetaParameter(attributeName, getSetterName(attributeName), ids, mdbList);
+		for(Category c : getCategoryList()){
+			for(Attribute a : getAttributeList(c)){
+				
+			}
 		}
 		
-		fillMetaParameterSpecialCases(ids, mdbList);
+		 
+		fillMetaParameter("Acquisition Time", getSetterName("Acquisition Time"), ids, srbList);
+		fillMetaParameter("Investigator", getSetterName("Investigator"), ids, srbList);
+		fillMetaParameter("File Name", getSetterName("File Name"), ids, srbList);
 		
-		return mdbList;
+		// Campaign Name, User, Name & Institute
+		fillMetaParameterSpecialCases(ids, srbList);
+		
+		return srbList;
 	}
+
+	private List<SearchResultBean> createSearchResultBeanList(List<Integer> ids, SpectralSpace space){
+		List<SearchResultBean> srbList = new LinkedList<>();
+		
+		for (Integer id : ids){
+//			srbList.add(new SearchResultBean(space));
+			srbList.add(new SearchResultBean(id));
+		}
+		 
+		fillMetaParameter("Acquisition Time", getSetterName("Acquisition Time"), ids, srbList);
+		fillMetaParameter("Investigator", getSetterName("Investigator"), ids, srbList);
+		fillMetaParameter("File Name", getSetterName("File Name"), ids, srbList);
+		
+		// Campaign Name, User, Name & Institute
+		fillMetaParameterSpecialCases(ids, srbList);
+		
+		return srbList;
+	}
+	
 	
 	private String getSetterName(String attributeName){
 		return "set" + replaceCharactersFromAttributeName(attributeName);
@@ -278,20 +362,37 @@ public class SpecchioUtil {
 		return attributeName;
 	}
 	
-	private void fillMetaParameterSpecialCases(List<Integer> ids, List<MetaDataBean> mdbList){
+	private void fillMetaParameterSpecialCases(List<Integer> ids, List<SearchResultBean> srbList){
+		
+		List<Object> commonList = specchio_client.getMetaparameterValues((ArrayList<Integer>) ids, "Common");
+		List<Object> latinList = specchio_client.getMetaparameterValues((ArrayList<Integer>) ids, "Latin");
 		
 		for(int i = 0; i < ids.size(); i++){
-			Integer id = ids.get(i);
-			Spectrum spectrum = specchio_client.getSpectrum(id, false);
+			Spectrum spectrum = specchio_client.getSpectrum(ids.get(i), false);
 			Campaign campaign = specchio_client.getCampaign(spectrum.getCampaignId());
+			SearchResultBean srb = srbList.get(i);
 			
-			MetaDataBean mdb = mdbList.get(i);
+			Object common = commonList.get(i);
+			Object latin = latinList.get(i);
+			
+			String name = "";
+			name += common == null ? "" : common.toString();
+			name += latin == null ? "" : name.isEmpty() ? latin : "(" + latin + ")";
+			srb.setName(name);	// Name
+			
 			if(campaign != null) { 
-			mdb.setCampaignName(campaign.getName()); // Campaign Name
+			srb.setCampaignName(campaign.getName()); // Campaign Name
 				if(campaign.getUser() != null){
-					mdb.setUser(campaign.getUser().getFirstName() + " " + campaign.getUser().getLastName()); // Username
+					if(srb.getInvestigator() == null || srb.getInvestigator().isEmpty()){
+						String fn = campaign.getUser().getFirstName();
+						String ln = campaign.getUser().getLastName();
+						String inv = 	fn != null && !fn.isEmpty() ? fn + " " : "" +
+										ln != null && !ln.isEmpty() ? ln : "";
+						srb.setInvestigator(inv); // User
+					}
+					
 					if(campaign.getUser().getInstitute() != null){
-						mdb.setInstitute(campaign.getUser().getInstitute().getInstituteName()); // Institute
+						srb.setInstitute(campaign.getUser().getInstitute().getInstituteName()); // Institute
 					}
 				}
 			}
@@ -299,7 +400,7 @@ public class SpecchioUtil {
 		
 	}
 	
-	private void fillMetaParameter(String metaType, String methodName, List<Integer> ids, List<MetaDataBean> mdbList) {
+	private void fillMetaParameter(String metaType, String methodName, List<Integer> ids, List<SearchResultBean> srbList) {
 		MatlabAdaptedArrayList<Object> resultList = specchio_client.getMetaparameterValues((ArrayList<Integer>) ids, metaType);
 		
 		Class[] paramString = new Class[1];
@@ -308,15 +409,16 @@ public class SpecchioUtil {
 		for(int i = 0; i < resultList.size(); i++){
 			Object o = resultList.get(i);
 			try { 
-				Class<?> c = Class.forName("ch.specchio.model.MetaDataBean");
+				Class<?> c = Class.forName("ch.specchio.model.SearchResultBean");
 				Method method = c.getDeclaredMethod(methodName, paramString);
-				method.invoke(mdbList.get(i), o != null ? o.toString() : "");
+				method.invoke(srbList.get(i), o != null ? o.toString() : "");
 			} catch (Exception e) { }
 		}
 	}
 
-	private void addEAVQueryCondition(Query query, SearchRowBean srb) {
+	private List<QueryCondition> createEAVQueryCondition(SearchRowBean srb) {
 		attribute attr = srb.getSelectedAttribute().getAttribute();
+		List<QueryCondition> condList = new LinkedList<>();
 		EAVQueryConditionObject cond = null;
 		
 		String dsf = srb.getSelectedAttribute().getDefaultStorageField();
@@ -325,49 +427,44 @@ public class SpecchioUtil {
 			cond = new EAVQueryConditionObject(attr);
 			cond.setValue(srb.getUserInput1());
 			cond.setOperator("like");
-			query.add_condition(cond);
+			condList.add(cond);
 		}
 		else if("int_val".equals(dsf) || "double_val".equals(dsf)){
 			cond = new EAVQueryConditionObject(attr);
 			cond.setValue(srb.getUserInput1());
 			cond.setOperator(">=");
-			query.add_condition(cond);
+			condList.add(cond);
 			
 			cond = new EAVQueryConditionObject(attr);
 			cond.setValue(srb.getUserInput2());
 			cond.setOperator("<=");
-			query.add_condition(cond);
+			condList.add(cond);
 		}
 		else if("taxonomy_id".equals(dsf)){
 			cond = new EAVQueryConditionObject(attr);
 			cond.setValue(srb.getUserInput1());
 			cond.setOperator("=");
-			query.add_condition(cond);
+			condList.add(cond);
 		}
 		else{
 			System.err.println(dsf);
 		}
+		
+		return condList;
 	}
 
-	private void addSpectrumQueryCondition(Query query, SearchRowBean srb) {
-		String idType = "";
-		
-		switch (srb.getSelectedAttribute().getName()){
-			case MOST_WANTED_1 :
-				idType = "measurement_unit_id";
-				break;
-			case MOST_WANTED_2 :
-				idType = "sensor_id";
-				break;
-			case MOST_WANTED_3 :
-				idType = "instrument_id";
-				break;
-		}
-		
+	private QueryCondition createSpectrumQueryCondition(SearchRowBean srb, String idType) {
 		SpectrumQueryCondition cond = new SpectrumQueryCondition("spectrum", idType); 
 		cond.setValue(srb.getUserInput1()); 
 		cond.setOperator("="); 
-		query.add_condition(cond); 
+		return cond;
+	}
+	
+	private QueryCondition createFullTextSearchCondition(Query query, List<Integer> ids){
+		SpectrumQueryCondition cond = new SpectrumQueryCondition("spectrum", "spectrum_id"); 
+		cond.setValue(ids);
+		cond.setOperator("in");
+		return cond;
 	}
 
 	private List<Integer> doFullTextSearch(SearchRowBean srb) {
@@ -376,6 +473,17 @@ public class SpecchioUtil {
 
 	public Map<String, List<Pair<String,String>>> getCategoryAttributesMap() {
 		return createCategoryAttributesMap();
+	}
+	
+	private void asdf(){
+		
+		// need to get the first spectrum so that we can display non-conflicting values
+		Spectrum s = specchio_client.getSpectrum(ids.get(0), false);
+
+		// add EAV parameters including their conflict status
+		ConflictTable eav_conflict_stati = specchio_client.getEavMetadataConflicts(ids);
+		Enumeration<String> conflicts = eav_conflict_stati.conflicts();
+		
 	}
 	
 }
