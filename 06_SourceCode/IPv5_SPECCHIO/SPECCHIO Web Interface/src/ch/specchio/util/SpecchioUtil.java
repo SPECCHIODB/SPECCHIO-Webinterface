@@ -294,30 +294,30 @@ public class SpecchioUtil {
 //		return srbList;
 //	}
 	
-	private List<MetaDataBean> createMetaDataBeanList(List<Integer> ids, SpectralSpace space){
-		List<MetaDataBean> mdbList = new LinkedList<>();
-		
-		for (Integer id : ids){
-//			srbList.add(new SearchResultBean(space));
-			srbList.add(new SearchResultBean(id));
-		}
-		
-		for(Category c : getCategoryList()){
-			for(Attribute a : getAttributeList(c)){
-				
-			}
-		}
-		
-		 
-		fillMetaParameter("Acquisition Time", getSetterName("Acquisition Time"), ids, srbList);
-		fillMetaParameter("Investigator", getSetterName("Investigator"), ids, srbList);
-		fillMetaParameter("File Name", getSetterName("File Name"), ids, srbList);
-		
-		// Campaign Name, User, Name & Institute
-		fillMetaParameterSpecialCases(ids, srbList);
-		
-		return srbList;
-	}
+//	private List<MetaDataBean> createMetaDataBeanList(List<Integer> ids, SpectralSpace space){
+//		List<MetaDataBean> mdbList = new LinkedList<>();
+//		
+//		for (Integer id : ids){
+////			srbList.add(new SearchResultBean(space));
+//			srbList.add(new SearchResultBean(id));
+//		}
+//		
+//		for(Category c : getCategoryList()){
+//			for(Attribute a : getAttributeList(c)){
+//				
+//			}
+//		}
+//		
+//		 
+//		fillMetaParameter("Acquisition Time", getSetterName("Acquisition Time"), ids, srbList);
+//		fillMetaParameter("Investigator", getSetterName("Investigator"), ids, srbList);
+//		fillMetaParameter("File Name", getSetterName("File Name"), ids, srbList);
+//		
+//		// Campaign Name, User, Name & Institute
+//		fillMetaParameterSpecialCases(ids, srbList);
+//		
+//		return srbList;
+//	}
 
 	private List<SearchResultBean> createSearchResultBeanList(List<Integer> ids, SpectralSpace space){
 		List<SearchResultBean> srbList = new LinkedList<>();
@@ -475,15 +475,15 @@ public class SpecchioUtil {
 		return createCategoryAttributesMap();
 	}
 	
-	private void asdf(){
-		
-		// need to get the first spectrum so that we can display non-conflicting values
-		Spectrum s = specchio_client.getSpectrum(ids.get(0), false);
-
-		// add EAV parameters including their conflict status
-		ConflictTable eav_conflict_stati = specchio_client.getEavMetadataConflicts(ids);
-		Enumeration<String> conflicts = eav_conflict_stati.conflicts();
-		
-	}
+//	private void asdf(){
+//		
+//		// need to get the first spectrum so that we can display non-conflicting values
+//		Spectrum s = specchio_client.getSpectrum(ids.get(0), false);
+//
+//		// add EAV parameters including their conflict status
+//		ConflictTable eav_conflict_stati = specchio_client.getEavMetadataConflicts(ids);
+//		Enumeration<String> conflicts = eav_conflict_stati.conflicts();
+//		
+//	}
 	
 }

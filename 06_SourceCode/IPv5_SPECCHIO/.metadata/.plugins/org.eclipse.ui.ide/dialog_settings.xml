@@ -8,17 +8,15 @@
 		<item value="233" key="DIALOG_Y_ORIGIN"/>
 	</section>
 	<section name="ExternalProjectImportWizard">
-		<item value="true" key="WizardProjectsImportPage.STORE_NESTED_PROJECTS"/>
-		<item value="true" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
-		<item value="true" key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_NESTED_PROJECTS"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"/>
 		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
-			<item value=""/>
-			<item value="C:\Users\Remo\Desktop\SPEECHIO Web Interface"/>
+			<item value="C:\Users\Remo\Desktop\SPECCHIO-SPECCHIO_Master"/>
+			<item value="C:\Users\Remo\Desktop\FHNW\_Projekt 5\SPECCHIO_Webinterface\06_SourceCode\IPv5_SPECCHIO\SPECCHIO Web Interface"/>
 		</list>
 		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
-			<item value="C:\Users\Remo\Desktop\specchio_cs.zip"/>
 			<item value=""/>
-			<item value="C:\Users\Remo\Desktop\SPECCHIO-SPECCHIO_Master.zip"/>
 		</list>
 	</section>
 </section>

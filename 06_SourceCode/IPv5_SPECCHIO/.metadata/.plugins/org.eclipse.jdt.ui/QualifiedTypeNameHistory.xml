@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="ch.specchio.types.attribute"/>
-<fullyQualifiedTypeName name="ch.specchio.queries.EAVQueryConditionObject"/>
-<fullyQualifiedTypeName name="java.util.Hashtable"/>
-<fullyQualifiedTypeName name="ch.specchio.queries.Query"/>
-<fullyQualifiedTypeName name="java.util.List"/>
-<fullyQualifiedTypeName name="com.sun.jersey.spi.dispatch.RequestDispatcher"/>
-<fullyQualifiedTypeName name="ch.specchio.spaces.Space"/>
-<fullyQualifiedTypeName name="ch.specchio.types.MatlabAdaptedArrayList"/>
-<fullyQualifiedTypeName name="com.quinncurtis.chart3djava.Legend"/>
-<fullyQualifiedTypeName name="ch.specchio.model.MetaValue"/>
-<fullyQualifiedTypeName name="ch.specchio.model.MetaDataObject"/>
-<fullyQualifiedTypeName name="java.util.LinkedList"/>
+<fullyQualifiedTypeName name="antlr.collections.List"/>
+<fullyQualifiedTypeName name="com.google.gson.reflect.TypeToken"/>
+<fullyQualifiedTypeName name="ch.specchio.model.MetaDataBean"/>
 <fullyQualifiedTypeName name="ch.specchio.util.SpecchioUtil"/>
-<fullyQualifiedTypeName name="com.sun.xml.xsom.impl.scd.Iterators.Map"/>
+<fullyQualifiedTypeName name="javax.servlet.RequestDispatcher"/>
+<fullyQualifiedTypeName name="com.google.gson.Gson"/>
 <fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="ch.specchio.types.Spectrum"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="ch.specchio.queries.QueryCondition"/>
+<fullyQualifiedTypeName name="java.util.LinkedList"/>
+<fullyQualifiedTypeName name="ch.specchio.types.ConflictTable"/>
+<fullyQualifiedTypeName name="java.util.Enumeration"/>
+<fullyQualifiedTypeName name="java.util.List"/>
 </qualifiedTypeNameHistroy>

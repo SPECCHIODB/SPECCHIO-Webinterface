@@ -1,3 +1,0 @@
-INDEX VERSION 1.127
-C:\Eclipse\Workspaces\IPv5_SPECCHIO\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\41923935.index
-\SPECCHIO Web Application\src

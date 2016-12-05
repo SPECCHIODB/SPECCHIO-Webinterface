@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Delete resource &apos;SPECCHIO Web Interface&apos;" deleteContents="true" description="Delete resource &apos;SPECCHIO Web Interface&apos;" element1="/SPECCHIO Web Interface" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1476684097037"/>&#x0A;<refactoring comment="Rename resource &apos;SPEECHIO Web Interface&apos; to &apos;SPECHIO Web Interface&apos;" description="Rename resource &apos;SPEECHIO Web Interface&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/SPEECHIO Web Interface" name="SPECHIO Web Interface" stamp="1476684103423" updateReferences="true"/>
-</session>

@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;SPECCHIO Web Inteface/res/db_config&apos; to &apos;db_config.txt&apos;" description="Rename resource &apos;db_config&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="res/db_config" name="db_config.txt" stamp="1475842113935" updateReferences="true"/>
-</session>
