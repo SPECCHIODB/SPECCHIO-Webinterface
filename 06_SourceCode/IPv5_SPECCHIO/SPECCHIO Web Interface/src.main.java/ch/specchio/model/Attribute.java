@@ -1,6 +1,6 @@
 package ch.specchio.model;
 
-public class Attribute {
+public class Attribute implements Comparable<Attribute>{
 
 	private ch.specchio.types.attribute attribute;
 	private String name;
@@ -49,5 +49,10 @@ public class Attribute {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	@Override
+	public int compareTo(Attribute a) {
+		return this.name.compareTo(a.getName());
 	}
 }

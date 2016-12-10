@@ -2,6 +2,7 @@ package ch.specchio.util;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -14,10 +15,12 @@ import ch.specchio.client.SPECCHIOClientFactory;
 import ch.specchio.client.SPECCHIOServerDescriptor;
 import ch.specchio.model.Attribute;
 import ch.specchio.model.Category;
+import ch.specchio.model.ChartDataBean;
 import ch.specchio.model.MetaDataBean;
 import ch.specchio.model.Pair;
 import ch.specchio.model.SearchResultBean;
 import ch.specchio.model.SearchRowBean;
+import ch.specchio.model.SpaceDetailBean;
 import ch.specchio.queries.EAVQueryConditionObject;
 import ch.specchio.queries.Query;
 import ch.specchio.queries.QueryCondition;
@@ -26,9 +29,11 @@ import ch.specchio.spaces.Space;
 import ch.specchio.spaces.SpectralSpace;
 import ch.specchio.types.Campaign;
 import ch.specchio.types.CategoryTable;
+import ch.specchio.types.ConflictInfo;
 import ch.specchio.types.ConflictTable;
 import ch.specchio.types.InstrumentDescriptor;
 import ch.specchio.types.MatlabAdaptedArrayList;
+import ch.specchio.types.MetaParameter;
 import ch.specchio.types.Sensor;
 import ch.specchio.types.Spectrum;
 import ch.specchio.types.attribute;
@@ -41,6 +46,8 @@ public class SpecchioUtil {
 	private final String MEASUREMENT_UNIT_ID	= "Measurement Unit ID";
 	private final String SENSOR_ID		 		= "Sensor ID";
 	private final String INSTRUMENT_ID	 		= "Instrument ID";
+	
+	private final int DISPLAYED_SEARCH_RESULTS 	= 5;
 	
 	private SPECCHIOClient specchio_client;
 	
@@ -65,13 +72,31 @@ public class SpecchioUtil {
 		return spectrumQueryConditionMap;
 	}
 	
+	
+	public Map<Category, List<Attribute>> getCategoryAttributeMap(){
+		Map<Category, List<Attribute>> map = new HashMap<>();
+		
+		for(Category c : getCategoryList()){
+			map.put(c, getAttributeList(c));
+		}
+		
+		return map;
+	}
+	
 	public List<Category> getCategoryList(){
 		List<Category> categoryList = new LinkedList<>();
 		categoryList.add(new Category(FULL_TEXT_SEARCH));
 		categoryList.add(new Category(MOST_WANTED));
+
+		// Categories that shouldn't be displayed in the Category Dropdown
+		List<String> ignoredCategories = new LinkedList<>();
+		ignoredCategories.add("Data Links");
+		ignoredCategories.add("PDFs");
+		ignoredCategories.add("Pictures");
 		
-		for(ch.specchio.types.Category c : specchio_client.getCategoriesInfo())
-			categoryList.add(new Category(c));
+		for(ch.specchio.types.Category c : specchio_client.getCategoriesInfo()) {
+			if(!ignoredCategories.contains(c.name)) categoryList.add(new Category(c));
+		}
 		
 		return categoryList;
 	}
@@ -112,6 +137,17 @@ public class SpecchioUtil {
 		
 		List<Attribute> attributeList = new LinkedList<>();
 		for(attribute a : attributes) attributeList.add(new Attribute(a));
+		
+		if("General".equals(category)){
+			attributeList.add(new Attribute(MEASUREMENT_UNIT_ID, "drop_down"));
+			Collections.sort(attributeList);
+		}
+		else if("Instrument".equals(category)) {
+			attributeList.add(new Attribute(SENSOR_ID, "drop_down"));
+			attributeList.add(new Attribute(INSTRUMENT_ID, "drop_down"));
+			Collections.sort(attributeList);
+		}
+
 		return attributeList;
 	}
 	
@@ -194,10 +230,10 @@ public class SpecchioUtil {
 		return list;
 	}
 
-	public List<SearchResultBean> getSearchResultList(List<SearchRowBean> searchRowBeanList){
-		List<SearchResultBean> srbList = new LinkedList<>();
+	public ArrayList<Integer> getSpectrumIdList(List<SearchRowBean> searchRowBeanList){
+		ArrayList<Integer> ids = new ArrayList<>();
 		
-		if(searchRowBeanList == null || searchRowBeanList.isEmpty()) return srbList;
+		if(searchRowBeanList == null || searchRowBeanList.isEmpty()) return ids;
 		
 		List<List<Integer>> fullTextSearchResultList = new LinkedList<>();
 		List<QueryCondition> queryConditionList = new LinkedList<>();
@@ -221,9 +257,8 @@ public class SpecchioUtil {
 			
 		}
 		
-		List<Integer> ids = null;
 		if(fullTextSearchResultList.size() == 1 && queryConditionList.isEmpty()){
-			ids = fullTextSearchResultList.get(0);
+			ids = (ArrayList<Integer>) fullTextSearchResultList.get(0);
 		}
 		else {
 			Query query = new Query("spectrum"); 
@@ -243,87 +278,71 @@ public class SpecchioUtil {
 			ids = specchio_client.getSpectrumIdsMatchingQuery(query);
 		}
 		
-		Space[] spaces = specchio_client.getSpaces((ArrayList<Integer>) ids, "Acquisition Time");
+		return ids;
+	}
+	
+	public List<SearchResultBean> getSearchResults(int page, List<Integer> spectrumIdList){
+		
+		ArrayList<Integer> subList = new ArrayList<>();
+		int startIndex = page * DISPLAYED_SEARCH_RESULTS;
+		int endIndex = startIndex + DISPLAYED_SEARCH_RESULTS;
+		
+		for(int i = startIndex; i < endIndex; i++){
+			if(i < spectrumIdList.size())
+				subList.add(spectrumIdList.get(i));
+			else break;
+		}
+		
+		return getAllSearchResults(subList);
+	}
+	
+	public List<SearchResultBean> getAllSearchResults(List<SearchRowBean> searchRowBeanList){
+		return getAllSearchResults(getSpectrumIdList(searchRowBeanList));
+	}
+	
+	public List<SearchResultBean> getAllSearchResults(ArrayList<Integer> ids){
+		List<SearchResultBean> srbList = new LinkedList<>();
+		
+		if(ids == null || ids.isEmpty()) return srbList;
+		
+		Space[] spaces = getSpaces(ids, "Acquisition Time");
 		for(Space s : spaces){
 			SpectralSpace space = (SpectralSpace) s;
 			ids = space.getSpectrumIds(); // get them sorted by 'Acquisition Time'
-			space = (SpectralSpace) specchio_client.loadSpace(space);
-			
-			
-			srbList.addAll(createSearchResultBeanList(ids, space));
+
+			srbList.addAll(createSearchResultBeanList(ids));
 		}
 		
 		return srbList;
 	}
 	
-//	public List<SearchResultBean> getSearchResult(List<SearchRowBean> searchRowBeanList) {
-//		List<SearchResultBean> srbList = new LinkedList<>();
-//		List<Integer> ids = new LinkedList<>();
-//		Query query = new Query("spectrum"); 
-//		query.addColumn("spectrum_id");
-//		query.setQueryType(Query.SELECT_QUERY); 
-//		boolean fulltextsearch = false;
-//		
-//		for(SearchRowBean srb : searchRowBeanList){
-//			
-//			if(FIRST_CATEGORY.equals(srb.getSelectedCategory().getName())){ // Full Text Search
-//				ids = doFullTextSearch(srb); // TODO: kann fts in kombination mit anderen auftreten?
-//				fulltextsearch = true;
-//				break;
-//			}
-//			else if(SECOND_CATEGORY.equals(srb.getSelectedCategory().getName())){ // Most Wanted
-//				addSpectrumQueryCondition(query, srb);
-//			}
-//			else { // Other Categories
-//				addEAVQueryCondition(query, srb);
-//			}
-//			Spectrum s = new Spectrum();
-//		}
-//		if (!fulltextsearch) ids = specchio_client.getSpectrumIdsMatchingQuery(query);
-//		
-//		System.out.println(ids.size());
-//		
-//		Space[] spaces = specchio_client.getSpaces((ArrayList<Integer>) ids, "Acquisition Time");
-//		for(Space s : spaces){
-//			SpectralSpace space = (SpectralSpace) s;
-//			ids = space.getSpectrumIds(); // get them sorted by 'Acquisition Time'
-//			space = (SpectralSpace) specchio_client.loadSpace(space);
-//			srbList.addAll(createSearchResultBeanList(ids, space));
-//		}
-//		
-//		return srbList;
-//	}
+	public ArrayList<Integer> extractSpectrumIds(List<SearchResultBean> srbList){
+		ArrayList<Integer> ids = new ArrayList<>();
+		for(SearchResultBean srb : srbList){
+			ids.add(srb.getId());
+		}
+		
+		return ids;
+	}
 	
-//	private List<MetaDataBean> createMetaDataBeanList(List<Integer> ids, SpectralSpace space){
-//		List<MetaDataBean> mdbList = new LinkedList<>();
-//		
-//		for (Integer id : ids){
-////			srbList.add(new SearchResultBean(space));
-//			srbList.add(new SearchResultBean(id));
-//		}
-//		
-//		for(Category c : getCategoryList()){
-//			for(Attribute a : getAttributeList(c)){
-//				
-//			}
-//		}
-//		
-//		 
-//		fillMetaParameter("Acquisition Time", getSetterName("Acquisition Time"), ids, srbList);
-//		fillMetaParameter("Investigator", getSetterName("Investigator"), ids, srbList);
-//		fillMetaParameter("File Name", getSetterName("File Name"), ids, srbList);
-//		
-//		// Campaign Name, User, Name & Institute
-//		fillMetaParameterSpecialCases(ids, srbList);
-//		
-//		return srbList;
-//	}
-
-	private List<SearchResultBean> createSearchResultBeanList(List<Integer> ids, SpectralSpace space){
+	public Space[] getSpaces(ArrayList<Integer> ids, String sortBy){
+		return specchio_client.getSpaces((ArrayList<Integer>) ids, sortBy);
+	}
+	
+	public double[][] getVectors(SpectralSpace space){
+		space = (SpectralSpace) specchio_client.loadSpace(space);
+		return space.getVectorsAsArray();
+	}
+	
+	public double[] getWavelength(SpectralSpace space){
+		space = (SpectralSpace) specchio_client.loadSpace(space);
+		return space.getAverageWavelengths();
+	}
+	
+	private List<SearchResultBean> createSearchResultBeanList(List<Integer> ids){
 		List<SearchResultBean> srbList = new LinkedList<>();
 		
 		for (Integer id : ids){
-//			srbList.add(new SearchResultBean(space));
 			srbList.add(new SearchResultBean(id));
 		}
 		 
@@ -446,9 +465,6 @@ public class SpecchioUtil {
 			cond.setOperator("=");
 			condList.add(cond);
 		}
-		else{
-			System.err.println(dsf);
-		}
 		
 		return condList;
 	}
@@ -475,15 +491,92 @@ public class SpecchioUtil {
 		return createCategoryAttributesMap();
 	}
 	
-//	private void asdf(){
-//		
-//		// need to get the first spectrum so that we can display non-conflicting values
-//		Spectrum s = specchio_client.getSpectrum(ids.get(0), false);
-//
-//		// add EAV parameters including their conflict status
-//		ConflictTable eav_conflict_stati = specchio_client.getEavMetadataConflicts(ids);
-//		Enumeration<String> conflicts = eav_conflict_stati.conflicts();
-//		
-//	}
 	
+	
+	public Map<String, List<Pair<String,String>>> getCategoryAttributeMap(ArrayList<Integer> idList){
+		
+		Map<String, List<Pair<String,String>>> map = new HashMap<>();
+		if(idList == null || idList.isEmpty()) return map;
+		
+		// One Spectrum
+		if(idList.size() == 1){
+			Spectrum s = specchio_client.getSpectrum(idList.get(0), false);
+			
+			for(MetaParameter mp : s.getMetadata().getEntries()){
+				
+				if(map.get(mp.getCategoryName()) == null) {
+					map.put(mp.getCategoryName(), new LinkedList<Pair<String,String>>());
+				}
+				map.get(mp.getCategoryName()).add(new Pair<>(mp.getAttributeName(), mp.getValue().toString()));
+				
+			}
+			
+		}
+		// Multiple Spectra
+		else {
+			
+			// need to get the first spectrum so that we can display non-conflicting values
+			Spectrum s = specchio_client.getSpectrum(idList.get(0), false);
+			
+			// add EAV parameters including their conflict status
+			ConflictTable eav_conflict_stati = specchio_client.getEavMetadataConflicts(idList);
+
+			
+			for(MetaParameter mp : s.getMetadata().getEntries()){
+				
+				if(map.get(mp.getCategoryName()) == null) {
+					map.put(mp.getCategoryName(), new LinkedList<Pair<String,String>>());
+				}
+				
+				ConflictInfo  conflict = eav_conflict_stati.get(mp.getAttributeId());
+				int status = conflict.getConflictData(mp.getEavId()).getStatus();
+				
+				// no conflict
+				if(status == 3) {
+					map.get(mp.getCategoryName()).add(new Pair<>(mp.getAttributeName(), mp.getValue().toString()));
+				}
+				else {
+					map.get(mp.getCategoryName()).add(new Pair<>(mp.getAttributeName(), "Multiple Values"));
+				}
+				
+			}
+			
+			
+		}
+		
+		
+		return map;
+	}
+	
+	public List<SpaceDetailBean> createSpaceDetailBeanList(List<SearchResultBean> srbList) {
+		return createSpaceDetailBeanList(extractSpectrumIds(srbList));
+	}
+	
+	public List<SpaceDetailBean> createSpaceDetailBeanList(int spectrumId){
+		ArrayList<Integer> idList = new ArrayList<>();
+		idList.add(spectrumId);
+		return createSpaceDetailBeanList(idList);
+	}
+
+	private List<SpaceDetailBean> createSpaceDetailBeanList(ArrayList<Integer> spectrumIdList){
+		
+		List<SpaceDetailBean> sdbList = new LinkedList<>();
+		Space[] spaces = getSpaces(spectrumIdList, "Acquisition Time");
+		
+		for(Space space : spaces){
+			ChartDataBean wavelength = new ChartDataBean("wavelength", getWavelength((SpectralSpace) space));
+			
+			List<ChartDataBean> vectorList = new LinkedList<>();
+			MatlabAdaptedArrayList<Object> resultList = specchio_client.getMetaparameterValues(space.getSpectrumIds(), "File Name");
+			
+			double[][] vectors = getVectors((SpectralSpace) space);
+			for(int i = 0; i < vectors.length; i++){
+				vectorList.add(new ChartDataBean(resultList.get(i).toString(),vectors[i]));
+			}
+			
+			sdbList.add(new SpaceDetailBean(wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds())));
+		}
+		
+		return sdbList;
+	}
 }

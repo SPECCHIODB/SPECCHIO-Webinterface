@@ -10,12 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.Gson;
-
 import ch.specchio.model.Attribute;
 import ch.specchio.model.SearchResultBean;
 import ch.specchio.model.SearchRowBean;
 import ch.specchio.util.SpecchioUtil;
+
+import com.google.gson.Gson;
 
 
 @SuppressWarnings("serial")
@@ -26,7 +26,7 @@ public class SearchServlet extends HttpServlet {
 	private void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		int numberOfRows = req.getParameter("numberOfRows") != null ? Integer.valueOf(req.getParameter("numberOfRows")) : 0;
-		boolean doSearch = "true".equals(req.getParameter("doSearch"));
+		String reqType = req.getParameter("reqType");
 		
 		List<SearchRowBean> searchRowBeanList = new LinkedList<>();
 		
@@ -62,11 +62,12 @@ public class SearchServlet extends HttpServlet {
 		RequestDispatcher rd = null;
 		Gson gson = new Gson();
 		
-		if(doSearch) {
-			req.setAttribute("srbList", gson.toJson(util.getSearchResultList(searchRowBeanList)));
+		if("show".equals(reqType)) {
+			req.setAttribute("srbList", gson.toJson(util.getAllSearchResults(searchRowBeanList)));
 			rd = req.getRequestDispatcher("/searchResult.jsp"); // show searchResult.jsp
 		}
 		else {
+			req.setAttribute("searchResultCount", util.getSpectrumIdList(searchRowBeanList).size());
 			req.setAttribute("categoryList", gson.toJson(util.getCategoryList()));
 			req.setAttribute("searchRowBeanList", gson.toJson(searchRowBeanList));
 			rd = req.getRequestDispatcher("/search.jsp"); // show search.jsp

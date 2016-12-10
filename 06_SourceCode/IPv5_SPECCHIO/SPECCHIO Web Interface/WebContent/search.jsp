@@ -32,8 +32,9 @@
 					<!-- jQuery adds searchRows dynamically here. -->
 				</form>
 				
-				<input type="button" id="addButton" value="Add Row" title="Add" class="btn btn-lg btn-primary btnMoreWidth"/>
+				<input type="button" id="addButton" value="Add Filter" title="Add Filter" class="btn btn-lg btn-primary btnMoreWidth"/>
 				<input type="button" id="searchButton" value="Search" title="Search" class="btn btn-lg btn-success btnMoreWidth"/>
+				<input type="button" id="showButton" value="Show Result" title="Show Result"  disabled class="btn btn-lg btn-success btnMoreWidth"/>
 				
 			</div>
 			
@@ -45,6 +46,7 @@
         <script src="js/bootstrap.min.js"></script>
         
 		<script type="text/javascript">
+			var searchResultCount = ${searchResultCount};
 			var searchRowBeanList = ${searchRowBeanList};
  			var categoryList = ${categoryList};
 		</script> 

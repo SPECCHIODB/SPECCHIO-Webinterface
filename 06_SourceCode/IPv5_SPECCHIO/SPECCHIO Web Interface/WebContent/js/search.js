@@ -1,7 +1,25 @@
-var numberOfRows = 0;
-var doSearch = false;
+var numberOfRows;
+var reqType;
+var firstRow;
 
 function init(){
+	
+	numberOfRows = 0;
+	reqType = "init";
+	firstRow = true;
+	
+	if(searchResultCount > 0){
+		$("#showButton").prop('disabled', false);
+		
+		if(searchResultCount == 1) 
+			showMessageBox("success", "glyphicon-ok-sign", "One spectrum has been found for your search criteria.");
+		else 
+			showMessageBox("success", "glyphicon-ok-sign", searchResultCount+" spectra have been found for your search criteria.");
+	}
+	else {
+		showMessageBox("info", "glyphicon-info-sign", "Set or modify your search criteria to search for spectra.")
+	}
+	
 	
 	addTitleRow();
 	
@@ -14,6 +32,14 @@ function init(){
 		}
 	}
 	
+}
+
+function showMessageBox(type, glyphicon, msg){
+	var form = $("#searchForm");
+	var msgBox = $('<div class="alert alert-'+type+'"></div>');
+	msgBox.append('<span class="glyphicon '+glyphicon+'"></span> ');
+	msgBox.append(msg);
+	form.append(msgBox);
 }
 
 function addTitleRow(){
@@ -44,13 +70,20 @@ function createSearchRow(srb){
     	searchRow.append(createAttributeSection(srb, ""));
     else searchRow.append(createAttributeSection(srb, "disabled"));
     searchRow.append(createInputSection(srb));
+    
+    
+    if(firstRow) firstRow = false;
+    else searchRow.append(createRemoveButton(searchRow));
+    
+    return searchRow;
+}
+
+function createRemoveButton(searchRow){
     var removeButton = $('<button type="button" title="Remove" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>').click(function(){
     	searchRow.remove();
     	submitSearchForm();
     });
-    searchRow.append(removeButton);
-    
-    return searchRow;
+    return removeButton;
 }
 
 function createCategorySection(srb){
@@ -141,7 +174,7 @@ function clearUserInput(rowNr){
 function addHiddenfields(){
 	var form = $("#searchForm");
 	form.append('<input type="hidden" name="numberOfRows" value="'+numberOfRows+'"/>');
-	form.append('<input type="hidden" name="doSearch" value="'+doSearch+'"/>');
+	form.append('<input type="hidden" name="reqType" value="'+reqType+'"/>');
 }
 
 
@@ -153,14 +186,22 @@ function submitSearchForm(){
 $(document).ready(function() {
 	
 	init();
-	
+
 	$("#searchButton").click(function(){
-		doSearch = true;
+		submitSearchForm();
+	});
+	
+	$("#showButton").click(function(){
+		reqType = "show";
 		submitSearchForm();
 	});
 	
 	$("#addButton").click(function(){
 		addSearchRow(null);
+	});
+	
+	$("input").change(function(){
+		$("#showButton").prop('disabled', true);
 	});
 	
 });

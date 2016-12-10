@@ -1,6 +1,5 @@
 function init(){
 	
-	alert(searchResultBeanList.length);
 	for(var i = 0; i < searchResultBeanList.length; i++){
 		addTableRow(i, searchResultBeanList[i]);
 	}
@@ -41,6 +40,8 @@ $(document).ready(function() {
 	
 	init();
 	
+	 $('#test').DataTable();
+	
 	$("#showDetail").click(function(){
 		
 		var selectedSearchResultBeanList = [$("tbody input:checkbox:checked").length];
@@ -50,8 +51,6 @@ $(document).ready(function() {
 			selectedSearchResultBeanList[index] = searchResultBeanList[this.value];
 			index++;
 		});
-		
-		alert(selectedSearchResultBeanList.length);
 		
 		var form = $("#detailForm");
 		
