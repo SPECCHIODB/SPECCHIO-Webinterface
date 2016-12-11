@@ -40,7 +40,7 @@ $(document).ready(function() {
 	
 	init();
 	
-	 $('#test').DataTable();
+	$('#test').DataTable();
 	
 	$("#showDetail").click(function(){
 		

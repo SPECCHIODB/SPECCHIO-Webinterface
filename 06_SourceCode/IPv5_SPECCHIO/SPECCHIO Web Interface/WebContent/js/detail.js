@@ -1,18 +1,19 @@
 function init(){
 	
 	var container = $("#container");
-	container.append(createNavTab(spaceDetailBeanList.length));
+	container.append(createNavTab(spaceDetailBeanList));
 	container.append(createTabContent(spaceDetailBeanList));
 	createAllSpectralCharts(spaceDetailBeanList);
 	
 }
 
-function createNavTab(tabCount){
+function createNavTab(spaceDetailBeanList){
 	var navTab = $('<ul class="nav nav-tabs"></ul>');
 		
-	for(var i=0; i < tabCount; i++){
+	for(var i=0; i < spaceDetailBeanList.length; i++){
+		var sdb = spaceDetailBeanList[i];
 		var active = i==0 ? "active" : "";
-		navTab.append('<li class="'+active+'"><a data-toggle="tab" href="#tab'+i+'">Space '+i+'</a></li>');
+		navTab.append('<li class="'+active+'"><a data-toggle="tab" href="#tab'+i+'">'+sdb.spaceTypeName+'</a></li>');
 	}
 	
 	return navTab;
@@ -125,5 +126,19 @@ function showLinkedSpectrum(spectrumId){
 }
 
 $(document).ready(function() {
+	
 	init();
+	
+	$("#export").click(function(){
+		
+		var form = $("#exportForm");
+		
+		// replacing " with ' because of conflicts in servlet (/g = replace all ")
+		var json = JSON.stringify(spaceDetailBeanList).replace(/"/g, "'"); 
+		
+		form.append('<input type="hidden" name="spaceDetailBeanList" value="'+json+'"/>');
+		form.append('<input type="hidden" name="doExport" value="true"/>');
+		form.submit();
+	});
+	
 });

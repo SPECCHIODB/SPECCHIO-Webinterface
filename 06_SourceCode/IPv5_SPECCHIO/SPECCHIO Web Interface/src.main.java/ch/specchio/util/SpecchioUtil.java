@@ -1,9 +1,11 @@
 package ch.specchio.util;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -16,7 +18,6 @@ import ch.specchio.client.SPECCHIOServerDescriptor;
 import ch.specchio.model.Attribute;
 import ch.specchio.model.Category;
 import ch.specchio.model.ChartDataBean;
-import ch.specchio.model.MetaDataBean;
 import ch.specchio.model.Pair;
 import ch.specchio.model.SearchResultBean;
 import ch.specchio.model.SearchRowBean;
@@ -70,17 +71,6 @@ public class SpecchioUtil {
 		spectrumQueryConditionMap.put(SENSOR_ID, "sensor_id");
 		spectrumQueryConditionMap.put(INSTRUMENT_ID, "instrument_id");
 		return spectrumQueryConditionMap;
-	}
-	
-	
-	public Map<Category, List<Attribute>> getCategoryAttributeMap(){
-		Map<Category, List<Attribute>> map = new HashMap<>();
-		
-		for(Category c : getCategoryList()){
-			map.put(c, getAttributeList(c));
-		}
-		
-		return map;
 	}
 	
 	public List<Category> getCategoryList(){
@@ -317,6 +307,7 @@ public class SpecchioUtil {
 	}
 	
 	public ArrayList<Integer> extractSpectrumIds(List<SearchResultBean> srbList){
+		
 		ArrayList<Integer> ids = new ArrayList<>();
 		for(SearchResultBean srb : srbList){
 			ids.add(srb.getId());
@@ -491,16 +482,62 @@ public class SpecchioUtil {
 		return createCategoryAttributesMap();
 	}
 	
+	public Map<String, List<String>> getAttributeValueListMap(ArrayList<Integer> idList){
+		
+		Map<String, List<String>> attributeValueListMap = new HashMap<String, List<String>>();
+		List<Map<String, String>> attributeMapList = new LinkedList<>();
+		
+		for(int i = 0; i < idList.size(); i++){
+			
+			// get categoryAttributeMap for an id
+			Map<String, List<Pair<String, String>>> temp = getCategoryAttributeMap(idList.subList(i, i+i));
+			
+			// collect all attribute names and values from each category and store them in attributeMapList
+			Map<String, String> attributeMap = new HashMap<>();
+			for(List<Pair<String, String>> list : temp.values()){
+				for(Pair<String, String> p : list){
+					attributeMap.put(p.getFirst(), p.getSecond());
+				}
+			}
+			attributeMapList.add(attributeMap);
+			
+			// add an empty map entry for each attribute that exists for an id
+			// this is necessary because not every spectrum has the same attributes filled
+			for(Map<String, String> attrMap : attributeMapList){
+				for(String key : attrMap.keySet()){
+					if(attributeValueListMap.get(key) == null){
+						attributeValueListMap.put(key, new LinkedList<String>());
+					}
+				}
+			}
+			
+		}
+		
+		// for every attributeName that existed in at least one attribute,
+		// we add the value of each attribute or "" if an attribute name
+		// doesn't exist in the an attribute
+		for(String attributeName : attributeValueListMap.keySet()){
+			for(Map<String, String> attributeMap : attributeMapList){
+				
+				String attributeValue = attributeMap.get(attributeName);
+				attributeValueListMap.get(attributeName).add(attributeValue == null ? "" : attributeValue);
+				
+			}
+		}
+		
+		return attributeValueListMap;
+	}
 	
-	
-	public Map<String, List<Pair<String,String>>> getCategoryAttributeMap(ArrayList<Integer> idList){
+	public Map<String, List<Pair<String,String>>> getCategoryAttributeMap(List<Integer> idList){
 		
 		Map<String, List<Pair<String,String>>> map = new HashMap<>();
 		if(idList == null || idList.isEmpty()) return map;
 		
+		// need to get the first spectrum so that we can display non-conflicting values
+		Spectrum s = specchio_client.getSpectrum(idList.get(0), false);
+		
 		// One Spectrum
 		if(idList.size() == 1){
-			Spectrum s = specchio_client.getSpectrum(idList.get(0), false);
 			
 			for(MetaParameter mp : s.getMetadata().getEntries()){
 				
@@ -515,13 +552,9 @@ public class SpecchioUtil {
 		// Multiple Spectra
 		else {
 			
-			// need to get the first spectrum so that we can display non-conflicting values
-			Spectrum s = specchio_client.getSpectrum(idList.get(0), false);
-			
 			// add EAV parameters including their conflict status
-			ConflictTable eav_conflict_stati = specchio_client.getEavMetadataConflicts(idList);
+			ConflictTable eav_conflict_stati = specchio_client.getEavMetadataConflicts((ArrayList<Integer>) idList);
 
-			
 			for(MetaParameter mp : s.getMetadata().getEntries()){
 				
 				if(map.get(mp.getCategoryName()) == null) {
@@ -541,9 +574,7 @@ public class SpecchioUtil {
 				
 			}
 			
-			
 		}
-		
 		
 		return map;
 	}
@@ -558,7 +589,7 @@ public class SpecchioUtil {
 		return createSpaceDetailBeanList(idList);
 	}
 
-	private List<SpaceDetailBean> createSpaceDetailBeanList(ArrayList<Integer> spectrumIdList){
+	public List<SpaceDetailBean> createSpaceDetailBeanList(ArrayList<Integer> spectrumIdList){
 		
 		List<SpaceDetailBean> sdbList = new LinkedList<>();
 		Space[] spaces = getSpaces(spectrumIdList, "Acquisition Time");
@@ -574,9 +605,10 @@ public class SpecchioUtil {
 				vectorList.add(new ChartDataBean(resultList.get(i).toString(),vectors[i]));
 			}
 			
-			sdbList.add(new SpaceDetailBean(wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds())));
+			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName(), wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds()));
 		}
 		
 		return sdbList;
 	}
+
 }

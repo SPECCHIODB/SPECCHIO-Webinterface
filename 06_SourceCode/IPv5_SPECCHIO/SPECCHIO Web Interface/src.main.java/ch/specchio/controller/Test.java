@@ -45,6 +45,5 @@ public class Test {
 		double[][] vectors = space.getVectorsAsArray();
 		double[] wvl = space.getAverageWavelengths();
 		
-		for(double d : wvl) System.out.println(d);
 	}
 }

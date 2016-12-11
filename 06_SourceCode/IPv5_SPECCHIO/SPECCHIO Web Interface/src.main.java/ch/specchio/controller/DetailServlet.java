@@ -1,6 +1,8 @@
 package ch.specchio.controller;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,10 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ch.specchio.model.Pair;
 import ch.specchio.model.SearchResultBean;
 import ch.specchio.model.SpaceDetailBean;
-import ch.specchio.spaces.SpectralSpace;
+import ch.specchio.util.ExportUtil;
 import ch.specchio.util.SpecchioUtil;
 
 import com.google.gson.Gson;
@@ -35,24 +36,28 @@ public class DetailServlet extends HttpServlet {
 		SpecchioUtil util = new SpecchioUtil();
 		Gson gson = new Gson();
 		
+		List<SpaceDetailBean> spaceDetailBeanList;
 		if(linkedSpectrumId != null)
-			req.setAttribute("spaceDetailBeanList",gson.toJson(util.createSpaceDetailBeanList(Integer.parseInt(linkedSpectrumId))));
+			spaceDetailBeanList = util.createSpaceDetailBeanList(Integer.parseInt(linkedSpectrumId));
 		else 
-			req.setAttribute("spaceDetailBeanList",gson.toJson(util.createSpaceDetailBeanList(srbList)));
-		
+			spaceDetailBeanList = util.createSpaceDetailBeanList(srbList);
+			
+		req.setAttribute("spaceDetailBeanList",gson.toJson(spaceDetailBeanList));
+
 		RequestDispatcher rd = req.getRequestDispatcher("/detail.jsp");
 		rd.forward(req, resp);
-		
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		handleRequest(req, resp);
-	}
-	
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		handleRequest(req, resp);
+		if(req.getParameter("doExport") != null) {
+			// Converting json-String back to a List of SearchResultBean
+			Type listType = new TypeToken<LinkedList<SpaceDetailBean>>(){}.getType();
+			LinkedList<SpaceDetailBean> spaceDetailBeanList = new Gson().fromJson(req.getParameter("spaceDetailBeanList"), listType);
+			
+			ExportUtil.createCsvExportZip(resp, spaceDetailBeanList);
+		}
+		else handleRequest(req, resp);
 	}
 	
 }

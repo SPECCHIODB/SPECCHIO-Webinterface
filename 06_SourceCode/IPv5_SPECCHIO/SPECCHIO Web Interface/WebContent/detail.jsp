@@ -20,16 +20,20 @@
 	</head>
 	<body>
 		<%@ include file="nav.html" %>
-	
+		
+		<form id="exportForm" method="post" action="detail">
+			<input id="export" value="Download ZIP" type="button"/>
+			<!-- jQuery adds hiddenfield here -->
+		</form>
+		
 		<div id="container" class="container">
-		
-		
+			<!-- jQuery adds spectral curve and meta data here -->
 		</div>
 		
 		<form id="detailForm"  method="post" action="detail"> 
 			<!-- jQuery adds hiddenfield here -->
 		</form>
-	
+		 
 		
 		<%@ include file="footer.html" %>
 	
