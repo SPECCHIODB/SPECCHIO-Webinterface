@@ -13,7 +13,7 @@ body {
 }
 
 .full {
-  background: url(../img/bg_sierra_leone_river_estuary.jpg) no-repeat center center fixed;
+  background: url(../img/bg_french_synergy.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -79,26 +79,6 @@ body {
 	margin: 0 auto;
 	width: 40%;
 	height: 40%;
-}
-
-.dropdown-toggle{
-	width: 100%;
-	text-align: left;
-}
-
-.inputFrom {
-	display: inline;
-	width: 49%;
-}
-
-.inputTo {
-	display: inline;
-	width: 49%;
-	margin-left: 2%;
-}
-
-.row {
-	margin-bottom: 10px;
 }
 
 .gap-s {

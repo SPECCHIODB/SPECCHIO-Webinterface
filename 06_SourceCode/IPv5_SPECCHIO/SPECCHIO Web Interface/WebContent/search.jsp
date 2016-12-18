@@ -13,6 +13,9 @@
     
     	<!-- Custom styles for this template -->
     	<link href="css/search.css" rel="stylesheet">
+    	
+    	<!-- Custom fonts for this template -->
+    	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     
 	</head>
 	<body>
@@ -24,17 +27,18 @@
 			<div class="jumbotron">
 			
 				<h1>SPECCHIO</h1>
-				<p>Spectral Library</p>	
+				<h3>Spectral Library</h3>	
 				
 				<br/>			
 			
 				<form id="searchForm" method="post" action="search">
+					<input type="hidden" id="numberOfRows" name="numberOfRows" value="0"/>
 					<!-- jQuery adds searchRows dynamically here. -->
 				</form>
 				
-				<input type="button" id="addButton" value="Add Filter" title="Add Filter" class="btn btn-lg btn-primary btnMoreWidth"/>
-				<input type="button" id="searchButton" value="Search" title="Search" class="btn btn-lg btn-success btnMoreWidth"/>
-				<input type="button" id="showButton" value="Show Result" title="Show Result"  disabled class="btn btn-lg btn-success btnMoreWidth"/>
+				<input type="button" id="addButton" value="Add Filter" title="Add Filter" class="btn btn-md btn-primary btnMoreWidth"/>
+				<input type="button" id="searchButton" value="Search" title="Search" class="btn btn-md btn-success btnMoreWidth"/>
+				<input type="button" id="showButton" value="Show Spectra" title="Show Spectra"  disabled class="btn btn-md btn-success btnMoreWidth"/>
 				
 			</div>
 			
@@ -46,11 +50,20 @@
         <script src="js/bootstrap.min.js"></script>
         
 		<script type="text/javascript">
-			var searchResultCount = ${searchResultCount};
-			var searchRowBeanList = ${searchRowBeanList};
- 			var categoryList = ${categoryList};
+			// default values
+			var searchResultCount = 0;
+			var searchRowBeanList = [];
+			var categoryList = [];
+			var valid = true;
+		
+			// get values from request attributes if available
+			<c:if test="${not empty searchRowBeanList}" > searchRowBeanList = ${searchRowBeanList}; </c:if>
+			<c:if test="${not empty searchResultCount}" > searchResultCount = ${searchResultCount}; </c:if>
+			<c:if test="${not empty categoryList}" > categoryList = ${categoryList}; </c:if>
+			<c:if test="${not empty valid}" > valid = ${valid}; </c:if>
 		</script> 
 		
 		<%@ include file="footer.html" %>
+		
 	</body>
 </html>

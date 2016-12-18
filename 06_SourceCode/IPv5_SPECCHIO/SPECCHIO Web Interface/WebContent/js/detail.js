@@ -1,8 +1,10 @@
+var defaultDisplayedAttributes = 5;
+
 function init(){
 	
-	var container = $("#container");
-	container.append(createNavTab(spaceDetailBeanList));
-	container.append(createTabContent(spaceDetailBeanList));
+	var space = $("#space");
+	space.append(createNavTab(spaceDetailBeanList));
+	space.append(createTabContent(spaceDetailBeanList));
 	createAllSpectralCharts(spaceDetailBeanList);
 	
 }
@@ -25,9 +27,9 @@ function createTabContent(spaceDetailBeanList){
 	for(var i=0; i < spaceDetailBeanList.length; i++){
 		var sdb = spaceDetailBeanList[i];
 		var active = i == 0 ? "in active" : "";
-		var temp = $('<div id="tab'+i+'" class="tab-pane fade '+active+'">');
+		var temp = $('<div id="tab'+i+'" class="tab-pane fade '+active+'"></div>');
 		
-		temp.append('<div id="chart'+i+'"></div>');
+		temp.append('<div id="chart'+i+'" class="spectralChart" style="margin: 0 auto; width: 80%;"></div>');
 		temp.append(createMetaDataDiv(sdb.categoryAttributeMap));
 		
 		tabContent.append(temp);
@@ -39,8 +41,32 @@ function createTabContent(spaceDetailBeanList){
 function createAllSpectralCharts(spaceDetailBeanList) {
 	for(var i = 0; i < spaceDetailBeanList.length; i++){
 		var sdb = spaceDetailBeanList[i];
-		createSpectralChart("#chart"+i, sdb.wavelength, sdb.vectors);
+		asdf("chart"+i, sdb);
+		//createSpectralChart("#chart"+i, sdb.wavelength, sdb.vectors);
 	}
+}
+
+function asdf(chartId, sdb){
+	$(function () { 
+	    var myChart = Highcharts.chart(chartId, {
+	        chart: {
+	            type: 'line',
+	            zoomType: 'xy'
+	        },
+	        title: {
+	            text: 'Spectrum Plot'
+	        },
+	        xAxis: {
+	            categories: sdb.wavelength.data
+	        },
+	        yAxis: {
+	            title: {
+	                text: sdb.measurementUnit
+	            }
+	        },
+	        series: sdb.vectors
+	    });
+	});
 }
 
 function createSpectralChart(chartId, wavelength, vectors){
@@ -94,22 +120,36 @@ function createMetaDataDiv(categoryAttributeMap){
 		
 		var table = $('<table class="table"></table>');
 		var tbody = $('<tbody></tbody>');
+		var hiddentbody = $('<tbody hidden></tbody>');
 		
 		for(var i = 0; i < attributeList.length; i++){
 			var attribute = attributeList[i];
 			var displayName = attribute.first;
 			var value = attribute.second;
 			
-			if(category == "Data Links" && value != "Multiple Values"){
-				tbody.append('<tr><td>'+displayName+':</td><td><a href="#" onclick="showLinkedSpectrum('+value+');">Show Linked Spectrum</a></td></tr>');
-			}
-			else {
-				tbody.append('<tr><td>'+displayName+':</td><td>'+value+'</td></tr>');
-			}
 			
+			if(i < defaultDisplayedAttributes){
+				tbody.append(createAttributeTR(category, displayName, value));
+			}
+			else{
+				hiddentbody.append(createAttributeTR(category, displayName, value));
+			}
 		}
 		
+		
 		table.append(tbody);
+		if(attributeList.length > defaultDisplayedAttributes) {
+			table.append(hiddentbody);
+			var showAll = $('<input type="button" class="btn btn-xs btn-default" style="margin-left: 50%; margin-right; 50%;"  value="Show All" />');
+			showAll.click(function(){
+				if(hiddentbody.prop('hidden')) 
+					showAll.val('Show Less');
+				else showAll.val('Show All');
+				
+				hiddentbody.prop('hidden', !hiddentbody.prop('hidden'));
+			});
+			table.append(showAll);
+		}
 		categoryDiv.append(table);
 		categoryDiv.append('<hr/>')
 		container.append(categoryDiv);
@@ -117,6 +157,17 @@ function createMetaDataDiv(categoryAttributeMap){
 		categoryCount++;
 	});
 	return categories;
+}
+
+function createAttributeTR(category, displayName, value){
+	var tr = $('<tr></tr>');
+	if(category == "Data Links" && value != "Multiple Values"){
+		tr.append('<td>'+displayName+':</td><td><a href="#" onclick="showLinkedSpectrum('+value+');">Show Linked Spectrum</a></td>');
+	}
+	else {
+		tr.append('<td>'+displayName+':</td><td>'+value+'</td>');
+	}
+	return tr;
 }
 
 function showLinkedSpectrum(spectrumId){
@@ -139,6 +190,10 @@ $(document).ready(function() {
 		form.append('<input type="hidden" name="spaceDetailBeanList" value="'+json+'"/>');
 		form.append('<input type="hidden" name="doExport" value="true"/>');
 		form.submit();
+	});
+	
+	$("#pdf").click(function(){
+		window.print();
 	});
 	
 });

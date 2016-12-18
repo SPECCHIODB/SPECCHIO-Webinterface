@@ -13,14 +13,20 @@ public class SearchRowBean {
 	private List<Attribute> attributeList;
 	private List<Pair<String, String>> dropdownPairList;
 	
+	private boolean validInput1;
+	private boolean validInput2;
+	private String errorMessage;
 	
 	public SearchRowBean() {
 		attributeList = new LinkedList<>();
 		selectedCategory = null;
 		selectedAttribute = null;
 		dropdownPairList = new LinkedList<>();
-		userInput1 = null;
-		userInput2 = null;
+		userInput1 = "";
+		userInput2 = "";
+		validInput1 = true;
+		validInput2 = true;
+		errorMessage = "";
 	}
 
 	public String getUserInput1() {
@@ -69,6 +75,30 @@ public class SearchRowBean {
 
 	public void setDropdownPairList(List<Pair<String, String>> dropdownPairList) {
 		this.dropdownPairList = dropdownPairList;
+	}
+
+	public boolean isValidInput1() {
+		return validInput1;
+	}
+
+	public void setValidInput1(boolean validInput1) {
+		this.validInput1 = validInput1;
+	}
+
+	public boolean isValidInput2() {
+		return validInput2;
+	}
+
+	public void setValidInput2(boolean validInput2) {
+		this.validInput2 = validInput2;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 	
 }

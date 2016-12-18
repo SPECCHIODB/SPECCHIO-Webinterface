@@ -7,19 +7,29 @@ import java.util.Map;
 public class SpaceDetailBean {
 
 	private String spaceTypeName;
+	private String measurementUnit;
 	private ChartDataBean wavelength;
 	private List<ChartDataBean> vectors;
 	private ArrayList<Integer> spectrumIdList;
 	
 	private Map<String, List<Pair<String, String>>> categoryAttributeMap;
 
-	public SpaceDetailBean(String spaceTypeName, ChartDataBean wavelength, List<ChartDataBean> vectors, 
+	public SpaceDetailBean(String spaceTypeName, String measurementUnit, ChartDataBean wavelength, List<ChartDataBean> vectors, 
 			Map<String, List<Pair<String, String>>> categoryAttributeMap, ArrayList<Integer> spectrumIdList) {
 		this.wavelength = wavelength;
 		this.vectors = vectors;
 		this.categoryAttributeMap = categoryAttributeMap;
 		this.spectrumIdList = spectrumIdList;
 		this.spaceTypeName = spaceTypeName;
+		this.measurementUnit = measurementUnit;
+	}
+	
+	public String getMeasurementUnit() {
+		return measurementUnit;
+	}
+
+	public void setMeasurementUnit(String measurementUnit) {
+		this.measurementUnit = measurementUnit;
 	}
 
 	public ChartDataBean getWavelength() {

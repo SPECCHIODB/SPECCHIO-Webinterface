@@ -1,0 +1,41 @@
+#pdfExport {
+	display: none;
+}
+
+.container {
+	margin: 0px;
+	padding: 0px;
+}
+
+footer {
+	display: none;
+}
+
+.spectralChart {
+	float: left;
+	width: 100%;
+}
+
+#content {
+	background-color: transparent;
+	padding: 0;
+	margin: 0;
+}
+
+#detail {
+	background-color: transparent;
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	background-color: transparent;
+	font-size: 12pt;
+	font-family: arial, sans-serif;
+	color: #000000;
+}
+
+p {
+	widows: 4;
+	orphans: 3;
+}

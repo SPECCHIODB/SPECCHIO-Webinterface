@@ -5,21 +5,29 @@ var firstRow;
 function init(){
 	
 	numberOfRows = 0;
-	reqType = "init";
+	reqType = "search";
 	firstRow = true;
 	
-	if(searchResultCount > 0){
+	if(!valid){
+		var errors = ""
+		for(var i = 0; i < searchRowBeanList.length; i++){
+			var srb = searchRowBeanList[i];
+			if(!srb.validInput1 || !srb.validInput2) 
+				errors += "- " + srb.errorMessage + "<br/>";
+		}
+		showMessageBox("warning", "glyphicon-warning-sign", "Please correct the following input errors", errors);
+	}
+	else if(searchResultCount > 0){
 		$("#showButton").prop('disabled', false);
 		
 		if(searchResultCount == 1) 
-			showMessageBox("success", "glyphicon-ok-sign", "One spectrum has been found for your search criteria.");
+			showMessageBox("success", "glyphicon-ok-sign", "One spectrum has been found.", "Add or Modify filters to search for spectra. Press 'Show Spectra' to have a look at all found spectra.");
 		else 
-			showMessageBox("success", "glyphicon-ok-sign", searchResultCount+" spectra have been found for your search criteria.");
+			showMessageBox("success", "glyphicon-ok-sign", searchResultCount + " spectra have been found.", "Add or Modify filters to search for spectra. Press 'Show Spectra' to have a look at all found spectra.");
 	}
 	else {
-		showMessageBox("info", "glyphicon-info-sign", "Set or modify your search criteria to search for spectra.")
+		showMessageBox("info", "glyphicon-info-sign", "No spectrum has been found.", "Add or Modify filters to search for spectra.")
 	}
-	
 	
 	addTitleRow();
 	
@@ -34,11 +42,15 @@ function init(){
 	
 }
 
-function showMessageBox(type, glyphicon, msg){
+function showMessageBox(type, glyphicon, title, msg){
 	var form = $("#searchForm");
 	var msgBox = $('<div class="alert alert-'+type+'"></div>');
-	msgBox.append('<span class="glyphicon '+glyphicon+'"></span> ');
-	msgBox.append(msg);
+	
+	msgBox.append('<span class="glyphicon '+glyphicon+'"></span> <strong>'+title+'</strong>');
+	if(msg != null){
+		msgBox.append('<br/>');
+		msgBox.append(msg);
+	}
 	form.append(msgBox);
 }
 
@@ -51,13 +63,14 @@ function addSearchRow(srb){
 	var form = $("#searchForm");
 	form.append(createSearchRow(srb));
 	numberOfRows++;
+	$("#numberOfRows").val(numberOfRows);
 }
 
 function createTitleRow(){
 	var titleRow = $('<div class="row"></div>');
-	titleRow.append('<div class="col-lg-3"><label>Category</label></div>');
-	titleRow.append('<div class="col-lg-3"><label>Attribute</label></div>');
-	titleRow.append('<div class="col-lg-5"><label>Input</label></div>');
+	titleRow.append('<div class="col-xs-3"><label>Category</label></div>');
+	titleRow.append('<div class="col-xs-3"><label>Attribute</label></div>');
+	titleRow.append('<div class="col-xs-5"><label>Input</label></div>');
 	
 	return titleRow;
 }
@@ -81,13 +94,14 @@ function createSearchRow(srb){
 function createRemoveButton(searchRow){
     var removeButton = $('<button type="button" title="Remove" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>').click(function(){
     	searchRow.remove();
+    	reqType = "search";
     	submitSearchForm();
     });
     return removeButton;
 }
 
 function createCategorySection(srb){
-	var section = $('<section class="col-lg-3"></section>');
+	var section = $('<section class="col-xs-3"></section>');
     
 	var rowNr = numberOfRows;
 	var select =  $('<select name="category_'+rowNr+'" class="btn btn-default dropdown-toggle"></select>');
@@ -98,6 +112,7 @@ function createCategorySection(srb){
     }
     select.change(function(){
     	clearUserInput(rowNr);
+    	reqType = "reload";
     	submitSearchForm();
     });
     section.append(select);
@@ -106,7 +121,7 @@ function createCategorySection(srb){
 }
 
 function createAttributeSection(srb, disabled){
-	var section = $('<section class="col-lg-3"></section>');
+	var section = $('<section class="col-xs-3"></section>');
 	
 	var rowNr = numberOfRows;
     var select = $('<select name="attribute_'+rowNr+'" class="btn btn-default dropdown-toggle '+ disabled +'" '+ disabled +'></select>');
@@ -118,6 +133,7 @@ function createAttributeSection(srb, disabled){
 	    }
 	    select.change(function(){
 	    	clearUserInput(rowNr);
+	    	reqType = "reload";
 	    	submitSearchForm();
 	    });
     }
@@ -127,24 +143,26 @@ function createAttributeSection(srb, disabled){
 }
 
 function createInputSection(srb){
-	var section = $('<section id="inputSection_'+numberOfRows+'" class="col-lg-5"></section>');
+	var section = $('<section id="inputSection_'+numberOfRows+'" class="col-xs-5"></section>');
 	
 	var rowNr = numberOfRows;
-	var dsf = srb != null && srb.selectedAttribute != null ? srb.selectedAttribute.defaultStorageField : 'init';
+	var dsf = srb != null && srb.selectedAttribute != null ? srb.selectedAttribute.defaultStorageField : 'string_val';
 	var userInput1 = srb != null && srb.userInput1 != undefined ? srb.userInput1 : "";
 	var userInput2 = srb != null && srb.userInput2 != undefined ? srb.userInput2 : "";
 	
-	if(dsf == 'init'){
-		section.append('<input type="text" name="userInput1_'+rowNr+'" class="form-control" />');
+	if(srb != null) {
+		var validStyleInput1 = srb.validInput1 ? "" : "border-color: red;";
+		var validStyleInput2 = srb.validInput2 ? "" : "border-color: red;";
 	}
-	else if(dsf == 'string_val'){
-		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" class="form-control" />');
+	
+	if(dsf == 'string_val'){
+		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" class="form-control" style="'+validStyleInput1+'"/>');
 	}
 	else if(dsf == 'int_val' || dsf == 'double_val'){
-		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="from" class="form-control inputFrom"/><input type="text" name="userInput2_'+rowNr+'" value="'+userInput2+'" placeholder="to" class="form-control inputTo"/>');
+		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="from" class="form-control inputFrom" style="'+validStyleInput1+'"/><input type="text" name="userInput2_'+rowNr+'" value="'+userInput2+'" placeholder="to" class="form-control inputTo" style="'+validStyleInput2+'"/>');
 	}
 	else if(dsf == 'datetime_val'){
-		section.append('<input type="date" name="userInput1_'+rowNr+'" value="'+userInput1+'" class="form-control" />');
+		section.append('<input type="date" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="dd.mm.yyyy" class="form-control" style="'+validStyleInput1+'"/>');
 	}
 	else if(dsf == 'drop_down' || dsf == 'taxonomy_id'){
 		var select = $('<select name="userInput1_'+rowNr+'" class="btn btn-default dropdown-toggle"></select>');
@@ -173,8 +191,8 @@ function clearUserInput(rowNr){
 
 function addHiddenfields(){
 	var form = $("#searchForm");
-	form.append('<input type="hidden" name="numberOfRows" value="'+numberOfRows+'"/>');
 	form.append('<input type="hidden" name="reqType" value="'+reqType+'"/>');
+	form.append('<input type="hidden" name="searchResultCount" value="'+searchResultCount+'"/>');
 }
 
 
@@ -188,6 +206,7 @@ $(document).ready(function() {
 	init();
 
 	$("#searchButton").click(function(){
+		reqType = "search";
 		submitSearchForm();
 	});
 	
@@ -202,6 +221,13 @@ $(document).ready(function() {
 	
 	$("input").change(function(){
 		$("#showButton").prop('disabled', true);
+	});
+	
+	$("input").keypress(function (e) {
+	  if (e.which == 13) {
+		submitSearchForm();
+	    return false;    //<---- Add this line
+	  }
 	});
 	
 });

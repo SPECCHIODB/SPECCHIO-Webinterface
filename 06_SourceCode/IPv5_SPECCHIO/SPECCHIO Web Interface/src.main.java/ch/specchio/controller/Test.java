@@ -2,7 +2,13 @@ package ch.specchio.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import ch.specchio.client.SPECCHIOClient;
@@ -19,31 +25,10 @@ public class Test {
 
 	public static void main(String[] args) throws SPECCHIOClientException,
 			FileNotFoundException, IOException {
-		SPECCHIOClientFactory cf = SPECCHIOClientFactory.getInstance();
-		List<SPECCHIOServerDescriptor> db_descriptor_list = cf
-				.getAllServerDescriptors();
-		SPECCHIOClient specchio_client = cf.createClient(db_descriptor_list
-				.get(0));
-
-		Query query = new Query();
-		attribute attr = specchio_client.getAttributesNameHash().get(
-				"File Name");
-		EAVQueryConditionObject cond = new EAVQueryConditionObject(attr);
-		cond.setValue("bfern.%");
-		cond.setOperator("like");
-		query.add_condition(cond);
-
-		ArrayList<Integer> ids = specchio_client.getSpectrumIdsMatchingQuery(query);
-
-		Space[] spaces = specchio_client.getSpaces(ids, "Acquisition Time");
-		SpectralSpace space = (SpectralSpace) spaces[0];
 		
-		ids = space.getSpectrumIds();
-
-		space = (SpectralSpace) specchio_client.loadSpace(space);
-
-		double[][] vectors = space.getVectorsAsArray();
-		double[] wvl = space.getAverageWavelengths();
 		
+
+		
+		System.out.println("2.22.2222".matches("^[0-9]{2}.[0-9]{2}.[0-9]{4}$"));
 	}
 }

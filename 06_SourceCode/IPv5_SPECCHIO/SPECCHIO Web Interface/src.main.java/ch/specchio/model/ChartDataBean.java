@@ -2,28 +2,27 @@ package ch.specchio.model;
 
 public class ChartDataBean {
 
-	String text;
-	double[] values;
+	String name;
+	double[] data;
 	
-	public ChartDataBean(String text, double[] values) {
-		this.text = text;
-		this.values = values;
+	public ChartDataBean(String name, double[] data) {
+		super();
+		this.name = name;
+		this.data = data;
 	}
-
-	public String getText() {
-		return text;
+	public String getName() {
+		return name;
 	}
-
-	public void setText(String text) {
-		this.text = text;
+	public void setName(String name) {
+		this.name = name;
 	}
-
-	public double[] getValues() {
-		return values;
+	public double[] getData() {
+		return data;
 	}
-
-	public void setValues(double[] values) {
-		this.values = values;
+	public void setData(double[] data) {
+		this.data = data;
 	}
+	
+	
 	
 }

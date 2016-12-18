@@ -40,7 +40,7 @@ $(document).ready(function() {
 	
 	init();
 	
-	$('#test').DataTable();
+	$('#resultTable').DataTable();
 	
 	$("#showDetail").click(function(){
 		
@@ -61,4 +61,8 @@ $(document).ready(function() {
 		form.submit();
 	});
 	
+//	$("#selectAll").click(function(){
+//		var checked = $("#selectAll").prop("checked")
+//		$("#resultTable").find("input:checkbox").prop("checked", checked)
+//	});
 });

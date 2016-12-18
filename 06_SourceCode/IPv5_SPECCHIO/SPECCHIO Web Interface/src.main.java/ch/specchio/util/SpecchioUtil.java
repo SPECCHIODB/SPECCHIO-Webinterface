@@ -1,16 +1,24 @@
 package ch.specchio.util;
 
-import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import ch.specchio.client.SPECCHIOClient;
 import ch.specchio.client.SPECCHIOClientFactory;
@@ -53,6 +61,14 @@ public class SpecchioUtil {
 	private SPECCHIOClient specchio_client;
 	
 	public SpecchioUtil() {
+		
+		try {
+			DbConfigUtil.loadDbConfig();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		connectToDB();
 	}
 	
@@ -257,6 +273,8 @@ public class SpecchioUtil {
 			
 			// Always do FullTextSearch first
 			for(List<Integer> idList : fullTextSearchResultList){
+				if(idList == null || idList.isEmpty()) return ids;
+				
 				QueryCondition cond = createFullTextSearchCondition(query, idList);
 				query.add_join("spectrum", cond);
 				query.add_condition(cond);
@@ -473,9 +491,29 @@ public class SpecchioUtil {
 		cond.setOperator("in");
 		return cond;
 	}
+	
+	/**
+	 * returns the number of spectrum ids in the db
+	 */
+	public int getSpectrumIdCount() {
+		// to get all ids we do a fulltextsearch for empty string
+		// maybe later there will be an api method to get the id count
+		return getAllSpectrumIds() != null ? getAllSpectrumIds().size() : 0;
+	}
+	
+	/**
+	 * returns a List of all spectrum ids in the db
+	 */
+	public List<Integer> getAllSpectrumIds(){
+		// to get all ids we do a fulltextsearch for empty string
+		// maybe later there will be an api method to get the id count
+		return specchio_client.getSpectrumIdsMatchingFullTextSearch("");
+	}
 
 	private List<Integer> doFullTextSearch(SearchRowBean srb) {
-		return specchio_client.getSpectrumIdsMatchingFullTextSearch(srb.getUserInput1());
+		List<Integer> idList = specchio_client.getSpectrumIdsMatchingFullTextSearch(srb.getUserInput1());
+		
+		return idList != null ? idList : new ArrayList<Integer>();
 	}
 
 	public Map<String, List<Pair<String,String>>> getCategoryAttributesMap() {
@@ -490,7 +528,7 @@ public class SpecchioUtil {
 		for(int i = 0; i < idList.size(); i++){
 			
 			// get categoryAttributeMap for an id
-			Map<String, List<Pair<String, String>>> temp = getCategoryAttributeMap(idList.subList(i, i+i));
+			Map<String, List<Pair<String, String>>> temp = getCategoryAttributeMap(idList.subList(i, i+1));
 			
 			// collect all attribute names and values from each category and store them in attributeMapList
 			Map<String, String> attributeMap = new HashMap<>();
@@ -594,18 +632,24 @@ public class SpecchioUtil {
 		List<SpaceDetailBean> sdbList = new LinkedList<>();
 		Space[] spaces = getSpaces(spectrumIdList, "Acquisition Time");
 		
-		for(Space space : spaces){
+		for(int i = 0; i < spaces.length; i++){
+			
+			Space space = spaces[i]; 
+			
 			ChartDataBean wavelength = new ChartDataBean("wavelength", getWavelength((SpectralSpace) space));
 			
 			List<ChartDataBean> vectorList = new LinkedList<>();
 			MatlabAdaptedArrayList<Object> resultList = specchio_client.getMetaparameterValues(space.getSpectrumIds(), "File Name");
 			
 			double[][] vectors = getVectors((SpectralSpace) space);
-			for(int i = 0; i < vectors.length; i++){
-				vectorList.add(new ChartDataBean(resultList.get(i).toString(),vectors[i]));
+			for(int ii = 0; ii < vectors.length; ii++){
+				vectorList.add(new ChartDataBean(resultList.get(ii).toString(),vectors[ii]));
 			}
 			
-			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName(), wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds()));
+			
+			String measurementUnit = ((SpectralSpace) space).getMeasurementUnit().getUnitName();
+			
+			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName() + " " + (i+1), measurementUnit, wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds()));
 		}
 		
 		return sdbList;

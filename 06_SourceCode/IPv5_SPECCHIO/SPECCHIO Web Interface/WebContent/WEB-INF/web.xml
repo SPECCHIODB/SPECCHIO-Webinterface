@@ -6,10 +6,6 @@
   <servlet>
     <servlet-name>SearchServlet</servlet-name>
     <servlet-class>ch.specchio.controller.SearchServlet</servlet-class>
-    <init-param>
-    	<param-name>category</param-name>
-    	<param-value>Full Text Search</param-value>
-    </init-param>
   </servlet>
   <servlet>
     <servlet-name>DetailServlet</servlet-name>
