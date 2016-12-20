@@ -2,7 +2,9 @@ package ch.specchio.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -26,9 +28,11 @@ public class Test {
 	public static void main(String[] args) throws SPECCHIOClientException,
 			FileNotFoundException, IOException {
 		
+		double maxY = Double.MAX_VALUE;
+		DecimalFormat df = new DecimalFormat("#.####");
+		df.setRoundingMode(RoundingMode.CEILING);
+		maxY = Double.valueOf(df.format(maxY));
+		System.out.println(maxY);
 		
-
-		
-		System.out.println("2.22.2222".matches("^[0-9]{2}.[0-9]{2}.[0-9]{4}$"));
 	}
 }

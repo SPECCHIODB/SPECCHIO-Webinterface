@@ -1,4 +1,10 @@
+var selectedCheckboxes;
+var selectCount;
 function init(){
+	
+	selectedCheckboxes = [];
+	selectCount = 0;
+	$("#showDetail").prop('disabled', true);
 	
 	for(var i = 0; i < searchResultBeanList.length; i++){
 		addTableRow(i, searchResultBeanList[i]);
@@ -14,7 +20,11 @@ function addTableRow(index, srb){
 function createTableRow(index, srb){
 	var tableRow = $('<tr></tr>');
 	
-	tableRow.append('<td><input type="checkbox" value="'+index+'"/></td>');
+	var checkbox = $('<td><input type="checkbox" value="'+index+'"/></td>');
+	checkbox.click(function(){
+		handleCheckboxSelection(checkbox.find("input:checkbox"));
+	});
+	tableRow.append(checkbox);
 	tableRow.append(createTableData(tableRow, srb.acquisitionTime));
 	tableRow.append(createTableData(tableRow, srb.campaignName));
 	tableRow.append(createTableData(tableRow, srb.investigator));
@@ -28,12 +38,29 @@ function createTableRow(index, srb){
 function createTableData(tableRow, value){
 	var tableData = $('<td></td>');
 	tableData.click(function(){
-		var checked = $(tableRow).find("input:checkbox").prop("checked")
-		$(tableRow).find("input:checkbox").prop("checked", !checked)
+		var checkbox = $(tableRow).find("input:checkbox");
+		var checked = checkbox.prop("checked")
+		checkbox.prop("checked", !checked);
+		
+		handleCheckboxSelection(checkbox);
 	});
 	
 	tableData.append(value);
 	return tableData;
+}
+
+function handleCheckboxSelection(checkbox){
+	var checked = checkbox.prop("checked");
+	if(checked) {
+		selectedCheckboxes[checkbox.val()] = checkbox;
+		selectCount++;
+	}
+	else {
+		selectedCheckboxes[checkbox.val()] = undefined;
+		selectCount--;
+	}
+	
+	$("#showDetail").prop('disabled', selectCount == 0);
 }
 
 $(document).ready(function() {
@@ -44,13 +71,15 @@ $(document).ready(function() {
 	
 	$("#showDetail").click(function(){
 		
-		var selectedSearchResultBeanList = [$("tbody input:checkbox:checked").length];
+		var selectedSearchResultBeanList = [];
 		var index = 0;
-		
-		$("tbody input:checkbox:checked").each(function(){
-			selectedSearchResultBeanList[index] = searchResultBeanList[this.value];
-			index++;
-		});
+
+		for(var i = 0; i < selectedCheckboxes.length; i++){
+			if(selectedCheckboxes[i] != undefined) {
+				selectedSearchResultBeanList[index] = searchResultBeanList[selectedCheckboxes[i].val()];
+				index++;
+			}
+		}
 		
 		var form = $("#detailForm");
 		
@@ -61,8 +90,4 @@ $(document).ready(function() {
 		form.submit();
 	});
 	
-//	$("#selectAll").click(function(){
-//		var checked = $("#selectAll").prop("checked")
-//		$("#resultTable").find("input:checkbox").prop("checked", checked)
-//	});
 });

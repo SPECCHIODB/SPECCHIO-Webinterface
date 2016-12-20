@@ -72,22 +72,23 @@ public class SearchServlet extends HttpServlet {
 			rd = req.getRequestDispatcher("/searchResult.jsp"); // show searchResult.jsp
 			rd.forward(req, resp);
 		}
-		
-		if("init".equals(reqType))
-			req.setAttribute("searchResultCount", util.getSpectrumIdCount());
-		else if("reload".equals(reqType)) 
-			req.setAttribute("searchResultCount", req.getParameter("searchResultCount"));
 		else {
-			if(valid) req.setAttribute("searchResultCount", util.getSpectrumIdList(searchRowBeanList).size());
-			else req.setAttribute("searchResultCount", 0);
+			if("init".equals(reqType))
+				req.setAttribute("searchResultCount", util.getSpectrumIdCount());
+			else if("reload".equals(reqType)) 
+				req.setAttribute("searchResultCount", req.getParameter("searchResultCount"));
+			else {
+				if(valid) req.setAttribute("searchResultCount", util.getSpectrumIdList(searchRowBeanList).size());
+				else req.setAttribute("searchResultCount", 0);
+			}
+	
+			req.setAttribute("valid", valid);
+			req.setAttribute("categoryList", gson.toJson(util.getCategoryList()));
+			req.setAttribute("searchRowBeanList", gson.toJson(searchRowBeanList));
+			
+			rd = req.getRequestDispatcher("/search.jsp"); // show search.jsp
+			rd.forward(req, resp);
 		}
-
-		req.setAttribute("valid", valid);
-		req.setAttribute("categoryList", gson.toJson(util.getCategoryList()));
-		req.setAttribute("searchRowBeanList", gson.toJson(searchRowBeanList));
-		
-		rd = req.getRequestDispatcher("/search.jsp"); // show search.jsp
-		rd.forward(req, resp);
 	}
 	
 	/**
@@ -117,7 +118,7 @@ public class SearchServlet extends HttpServlet {
 				break;
 			case "datetime_val" :
 				
-				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
 				sdf.setLenient(false);
 
 				try {
@@ -126,7 +127,7 @@ public class SearchServlet extends HttpServlet {
 					srb.setValidInput1(true);
 				} catch (Exception e) {
 					srb.setValidInput1(false);
-					srb.setErrorMessage(srb.getSelectedAttribute().getName() + " must match Dateformat dd.mm.yyyy.");
+					srb.setErrorMessage(srb.getSelectedAttribute().getName() + " must match Dateformat yyyy-mm-dd.");
 				}
 				
 				break;

@@ -10,7 +10,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
+import java.math.RoundingMode;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,10 +32,12 @@ import ch.specchio.model.Pair;
 import ch.specchio.model.SearchResultBean;
 import ch.specchio.model.SearchRowBean;
 import ch.specchio.model.SpaceDetailBean;
+import ch.specchio.plots.VectorStatistics;
 import ch.specchio.queries.EAVQueryConditionObject;
 import ch.specchio.queries.Query;
 import ch.specchio.queries.QueryCondition;
 import ch.specchio.queries.SpectrumQueryCondition;
+import ch.specchio.spaces.MeasurementUnit;
 import ch.specchio.spaces.Space;
 import ch.specchio.spaces.SpectralSpace;
 import ch.specchio.types.Campaign;
@@ -648,11 +652,52 @@ public class SpecchioUtil {
 			
 			
 			String measurementUnit = ((SpectralSpace) space).getMeasurementUnit().getUnitName();
+			double maxY = 0;
+			if("Reflectance".equals(measurementUnit)){
+				// do statistics for VNIR
+				double vis_nir_start = 300;
+				double vis_nir_end = 1300;
+
+				int start_ind = ((SpectralSpace) space).get_index_of_band(vis_nir_start);
+				int end_ind = ((SpectralSpace) space).get_index_of_band(vis_nir_end);
+
+				if (start_ind >= 0 & end_ind > 0) {
+
+					VectorStatistics stats = new VectorStatistics();
+
+					ArrayList<double[]> vectorArray = new ArrayList<>();
+					for(double[] arr : vectors) vectorArray.add(arr);
+					stats.calc_stats(vectorArray, start_ind, end_ind);
+
+					if (stats.standardDeviation() > 0){
+//						DecimalFormat df = new DecimalFormat("#,###################");
+//						df.setRoundingMode(RoundingMode.CEILING);
+//						maxY = Double.valueOf(df.format(stats.mean()+1*stats.standardDeviation()));
+						maxY = stats.mean()+1*stats.standardDeviation();
+					}
+				}
+			}
+			if(maxY == 0) maxY = getHighest(vectors);
 			
-			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName() + " " + (i+1), measurementUnit, wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds()));
+			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName() + " " + (i+1), measurementUnit, wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds(), maxY));
+			
+			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName() + " " + (i+1), "gugus", wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds(), maxY));
 		}
 		
 		return sdbList;
+	}
+	
+	/**
+	 * returns the highest double value inside the double[][]
+	 */
+	private double getHighest(double[][] arrays){
+		double max = 0;
+		for(double[] array : arrays){
+			for(double d : array){
+				if(d > max) max = d;
+			}
+		}
+		return max;
 	}
 
 }

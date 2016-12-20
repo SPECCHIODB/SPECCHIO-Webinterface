@@ -24,7 +24,7 @@
 				<table id="resultTable" style="width:100%" border="1" class="table table-striped table-hover">
 					<thead>
 						<tr>
-							<th><!-- <input type="checkbox" id="selectAll" /> --></th>
+							<th></th>
 							<th>Acquisition Time</th>
 							<th>Campaign Name</th>
 						  	<th>Investigator</th>
@@ -38,7 +38,7 @@
 					</tbody>
 				</table> 
 				
-				<input type="button" id="showDetail" value="Show Detail" title="Show Detail" class="btn btn-lg btn-success btnMoreWidth"/>
+				<input type="button" id="showDetail" value="Show Detail" title="Show Detail" class="btn btn-md btn-success btnMoreWidth" disabled/>
 			
 			</div>
 		</div>
@@ -55,7 +55,6 @@
         
         <script src="js/jquery.dataTables.min.js"></script>
         <script src="js/dataTables.bootstrap.min.js"></script>
-         
         
         
 		<script type="text/javascript">

@@ -156,13 +156,13 @@ function createInputSection(srb){
 	}
 	
 	if(dsf == 'string_val'){
-		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" class="form-control" style="'+validStyleInput1+'"/>');
+		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="text" class="form-control" style="'+validStyleInput1+'"/>');
 	}
 	else if(dsf == 'int_val' || dsf == 'double_val'){
 		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="from" class="form-control inputFrom" style="'+validStyleInput1+'"/><input type="text" name="userInput2_'+rowNr+'" value="'+userInput2+'" placeholder="to" class="form-control inputTo" style="'+validStyleInput2+'"/>');
 	}
 	else if(dsf == 'datetime_val'){
-		section.append('<input type="date" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="dd.mm.yyyy" class="form-control" style="'+validStyleInput1+'"/>');
+		section.append('<input type="date" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="yyyy-mm-dd" class="form-control" style="'+validStyleInput1+'"/>');
 	}
 	else if(dsf == 'drop_down' || dsf == 'taxonomy_id'){
 		var select = $('<select name="userInput1_'+rowNr+'" class="btn btn-default dropdown-toggle"></select>');

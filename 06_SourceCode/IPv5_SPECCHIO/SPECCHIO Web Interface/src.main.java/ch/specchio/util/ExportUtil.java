@@ -32,6 +32,7 @@ public class ExportUtil {
         	
         	Map<String, List<String>> attributeValueListMap = util.getAttributeValueListMap(sdb.getSpectrumIdList());
         	
+        	// attribute names and values for each spectrum
         	for(String attributeName : attributeValueListMap.keySet()){
         		
         		sb.append(attributeName);
@@ -42,6 +43,7 @@ public class ExportUtil {
         		
         	}
         
+        	// wavelength and vectors of each spectrum
         	double[] wavelength = sdb.getWavelength().getData();
         	for(int i = 0; i < wavelength.length; i++){
         		

@@ -12,16 +12,19 @@ public class SpaceDetailBean {
 	private List<ChartDataBean> vectors;
 	private ArrayList<Integer> spectrumIdList;
 	
+	private double maxY;
+	
 	private Map<String, List<Pair<String, String>>> categoryAttributeMap;
 
 	public SpaceDetailBean(String spaceTypeName, String measurementUnit, ChartDataBean wavelength, List<ChartDataBean> vectors, 
-			Map<String, List<Pair<String, String>>> categoryAttributeMap, ArrayList<Integer> spectrumIdList) {
+			Map<String, List<Pair<String, String>>> categoryAttributeMap, ArrayList<Integer> spectrumIdList, double maxY) {
 		this.wavelength = wavelength;
 		this.vectors = vectors;
 		this.categoryAttributeMap = categoryAttributeMap;
 		this.spectrumIdList = spectrumIdList;
 		this.spaceTypeName = spaceTypeName;
 		this.measurementUnit = measurementUnit;
+		this.maxY = maxY;
 	}
 	
 	public String getMeasurementUnit() {
@@ -71,5 +74,13 @@ public class SpaceDetailBean {
 
 	public void setSpaceTypeName(String spaceTypeName) {
 		this.spaceTypeName = spaceTypeName;
+	}
+
+	public double getMaxY() {
+		return maxY;
+	}
+
+	public void setMaxY(double maxY) {
+		this.maxY = maxY;
 	}
 }

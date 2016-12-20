@@ -5,7 +5,8 @@ function init(){
 	var space = $("#space");
 	space.append(createNavTab(spaceDetailBeanList));
 	space.append(createTabContent(spaceDetailBeanList));
-	createAllSpectralCharts(spaceDetailBeanList);
+	createSpectralChart("chart", spaceDetailBeanList[0]);
+	//createAllSpectralCharts(spaceDetailBeanList);
 	
 }
 
@@ -15,7 +16,8 @@ function createNavTab(spaceDetailBeanList){
 	for(var i=0; i < spaceDetailBeanList.length; i++){
 		var sdb = spaceDetailBeanList[i];
 		var active = i==0 ? "active" : "";
-		navTab.append('<li class="'+active+'"><a data-toggle="tab" href="#tab'+i+'">'+sdb.spaceTypeName+'</a></li>');
+		var li = $('<li class="'+active+'"><a data-toggle="tab" href="#tab'+i+'" class="tab" id="'+i+'">'+sdb.spaceTypeName+'</a></li>');
+		navTab.append(li);
 	}
 	
 	return navTab;
@@ -23,13 +25,13 @@ function createNavTab(spaceDetailBeanList){
 
 function createTabContent(spaceDetailBeanList){
 	var tabContent = $('<div class="tab-content"></div>');
+	tabContent.append('<div id="chart" class="spectralChart" style="margin: 0 auto; width: 80%;"></div>');
 	
 	for(var i=0; i < spaceDetailBeanList.length; i++){
 		var sdb = spaceDetailBeanList[i];
 		var active = i == 0 ? "in active" : "";
 		var temp = $('<div id="tab'+i+'" class="tab-pane fade '+active+'"></div>');
 		
-		temp.append('<div id="chart'+i+'" class="spectralChart" style="margin: 0 auto; width: 80%;"></div>');
 		temp.append(createMetaDataDiv(sdb.categoryAttributeMap));
 		
 		tabContent.append(temp);
@@ -41,12 +43,11 @@ function createTabContent(spaceDetailBeanList){
 function createAllSpectralCharts(spaceDetailBeanList) {
 	for(var i = 0; i < spaceDetailBeanList.length; i++){
 		var sdb = spaceDetailBeanList[i];
-		asdf("chart"+i, sdb);
-		//createSpectralChart("#chart"+i, sdb.wavelength, sdb.vectors);
+		createSpectralChart("chart"+i, sdb);
 	}
 }
 
-function asdf(chartId, sdb){
+function createSpectralChart(chartId, sdb){
 	$(function () { 
 	    var myChart = Highcharts.chart(chartId, {
 	        chart: {
@@ -62,36 +63,11 @@ function asdf(chartId, sdb){
 	        yAxis: {
 	            title: {
 	                text: sdb.measurementUnit
-	            }
+	            },
+	            max: sdb.maxY
 	        },
 	        series: sdb.vectors
 	    });
-	});
-}
-
-function createSpectralChart(chartId, wavelength, vectors){
-
-	var columnsArray = [vectors.length + 1];
-	
-	columnsArray[0] = createChartArray(wavelength.text, wavelength.values);
-	
-	for(var i = 0; i < vectors.length; i++){
-		columnsArray[i+1] = createChartArray(vectors[i].text, vectors[i].values);
-	}
-	
-	c3.generate({
-		bindto: chartId,
-		data: {
-	        x: 'wavelength',
-	        columns: columnsArray
-	    },
-	    zoom: {
-	        enabled: true
-	    },
-	    tooltip: {
-	    	grouped: false
-	    }
-	    
 	});
 }
 
@@ -112,10 +88,8 @@ function createMetaDataDiv(categoryAttributeMap){
 		var cssClass = categoryCount % 2 == 0 ? "container-left" : "container-right";
 		var container = $('<div class="'+cssClass+'"></div>');
 		
-		//container.append('<a href="#category'+categoryCount+'" class="btn btn-default btnCollapse collapsed" data-toggle="collapse">'+category+'</a>');
 		container.append('<h1>'+category+'</h1>');
 		
-		//var categoryDiv = $('<div id="category'+categoryCount+'" class="collapse"></div>');
 		var categoryDiv = $('<div id="category'+categoryCount+'"></div>');
 		
 		var table = $('<table class="table"></table>');
@@ -151,12 +125,32 @@ function createMetaDataDiv(categoryAttributeMap){
 			table.append(showAll);
 		}
 		categoryDiv.append(table);
+//		if(category =="Location") {
+//			categoryDiv.append('<div id="map"></div>');
+//			categoryDiv.append('<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&v=3&callback=initMap"></script>');
+//		}
 		categoryDiv.append('<hr/>')
 		container.append(categoryDiv);
 		categories.append(container);
 		categoryCount++;
 	});
 	return categories;
+}
+
+function initMap(){
+	
+	var myLatLng = {lat: -25.363, lng: 131.044};
+
+	var map = new google.maps.Map(document.getElementById('map'), {
+		zoom: 4,
+		center: myLatLng
+	});
+	
+	var marker = new google.maps.Marker({
+		position: myLatLng,
+	    map: map,
+	    title: 'Hello World!'
+	});
 }
 
 function createAttributeTR(category, displayName, value){
@@ -194,6 +188,10 @@ $(document).ready(function() {
 	
 	$("#pdf").click(function(){
 		window.print();
+	});
+	
+	$(".tab").click(function(){
+		createSpectralChart("chart", spaceDetailBeanList[this.id]);
 	});
 	
 });
