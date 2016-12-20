@@ -681,7 +681,7 @@ public class SpecchioUtil {
 			
 			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName() + " " + (i+1), measurementUnit, wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds(), maxY));
 			
-			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName() + " " + (i+1), "gugus", wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds(), maxY));
+//			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName() + " " + (i+1), "gugus", wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds(), maxY));
 		}
 		
 		return sdbList;
