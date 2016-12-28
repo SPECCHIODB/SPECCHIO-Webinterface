@@ -67,7 +67,7 @@ function addSearchRow(srb){
 }
 
 function createTitleRow(){
-	var titleRow = $('<div class="row"></div>');
+	var titleRow = $('<div class="row row-gap"></div>');
 	titleRow.append('<div class="col-xs-3"><label>Category</label></div>');
 	titleRow.append('<div class="col-xs-3"><label>Attribute</label></div>');
 	titleRow.append('<div class="col-xs-5"><label>Input</label></div>');
@@ -77,7 +77,7 @@ function createTitleRow(){
 
 function createSearchRow(srb){
 
-    var searchRow = $('<div class="row"></div>');
+    var searchRow = $('<div class="row row-gap"></div>');
     searchRow.append(createCategorySection(srb));
     if(srb != null && srb.selectedCategory.name != "Full Text Search") 
     	searchRow.append(createAttributeSection(srb, ""));

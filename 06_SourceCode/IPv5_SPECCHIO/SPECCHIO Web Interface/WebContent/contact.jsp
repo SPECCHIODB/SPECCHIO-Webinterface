@@ -2,21 +2,17 @@
 <!DOCTYPE html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html class="full">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<link rel="icon" href="../../favicon.ico">
+	<head lang="en">
+		
+		<%@ include file="head.html" %>		
 		
 		<title>Contact</title>
 		
-		<!-- Bootstrap core CSS -->
-    	<link href="css/bootstrap.min.css" rel="stylesheet">
-    
+		<meta name="description" content="For questions, comments and further information about SPECCHIO Spectral Library.">
+		
     	<!-- Custom styles for this template -->
     	<link href="css/contact.css" rel="stylesheet">
     	
-    	<!-- Custom fonts for this template -->
-    	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
-    
 	</head>
 	<body>
 	
@@ -41,7 +37,10 @@
 		
 		<!-- js imports -->
 		<script src="js/jquery-2.1.4.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>				
+        <script src="js/bootstrap.min.js"></script>	
+        
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    	<script src="js/ie10-viewport-bug-workaround.js"></script>			
 		
 	</body>
 </html>

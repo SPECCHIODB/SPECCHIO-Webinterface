@@ -2,21 +2,18 @@
 <!DOCTYPE html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html class="full">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<link rel="icon" href="../../favicon.ico">
+	<head lang="en">
+	
+		 <%@ include file="head.html" %>
 		
-		<title>Search</title>
+		<title>SPECCHIO Web Interface</title>
 		
-		<!-- Bootstrap core CSS -->
-    	<link href="css/bootstrap.min.css" rel="stylesheet">
-    
+        <meta name="description" content="Web interface for the spectral database of the Department of Geography of the University of Zurich.">
+       	<meta name="keywords" content="SPECCHIO, web interface, spectral data, spectral data library">
+		
     	<!-- Custom styles for this template -->
     	<link href="css/search.css" rel="stylesheet">
     	
-    	<!-- Custom fonts for this template -->
-    	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
-    
 	</head>
 	<body>
 	
@@ -48,6 +45,9 @@
 		<script src="js/jquery-2.1.4.min.js"></script>
         <script src="js/search.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    	<script src="js/ie10-viewport-bug-workaround.js"></script>
         
 		<script type="text/javascript">
 			// default values

@@ -2,14 +2,11 @@
 <!DOCTYPE html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html class="full">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<link rel="icon" href="../../favicon.ico">
+	<head lang="en">
+	
+		<%@ include file="head.html" %>
 		
 		<title>Detail</title>
-		
-		<!-- Bootstrap core CSS -->
-    	<link href="css/bootstrap.min.css" rel="stylesheet">
     
     	<!-- Custom styles for this template -->
     	<link href="css/detail.css" rel="stylesheet">
@@ -46,6 +43,9 @@
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 		<script src="js/c3.js"></script>
 		<script src="http://code.highcharts.com/highcharts.js"></script>
+        
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    	<script src="js/ie10-viewport-bug-workaround.js"></script>
         
 		<script type="text/javascript">
 			var spaceDetailBeanList = ${spaceDetailBeanList};

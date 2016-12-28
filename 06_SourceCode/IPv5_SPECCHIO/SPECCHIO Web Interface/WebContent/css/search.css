@@ -97,9 +97,10 @@ body {
 	margin-left: 2%;
 }
 
-.row {
+.row-gap {
 	margin-bottom: 10px;
 }
+
 
 .gap-s {
 	margin-bottom: 25px;
@@ -112,3 +113,8 @@ body {
 .gap-l {
 	margin-bottom: 70px;
 }
+
+select {
+        height:34px;
+        line-height:34px;
+} 
