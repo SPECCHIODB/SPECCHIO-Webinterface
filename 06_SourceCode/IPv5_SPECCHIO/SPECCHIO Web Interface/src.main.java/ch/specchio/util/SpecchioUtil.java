@@ -1,18 +1,6 @@
 package ch.specchio.util;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
-import java.math.RoundingMode;
-import java.net.URISyntaxException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,7 +8,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import ch.specchio.client.SPECCHIOClient;
 import ch.specchio.client.SPECCHIOClientFactory;
@@ -37,7 +24,6 @@ import ch.specchio.queries.EAVQueryConditionObject;
 import ch.specchio.queries.Query;
 import ch.specchio.queries.QueryCondition;
 import ch.specchio.queries.SpectrumQueryCondition;
-import ch.specchio.spaces.MeasurementUnit;
 import ch.specchio.spaces.Space;
 import ch.specchio.spaces.SpectralSpace;
 import ch.specchio.types.Campaign;
@@ -46,6 +32,7 @@ import ch.specchio.types.ConflictInfo;
 import ch.specchio.types.ConflictTable;
 import ch.specchio.types.InstrumentDescriptor;
 import ch.specchio.types.MatlabAdaptedArrayList;
+import ch.specchio.types.MetaFile;
 import ch.specchio.types.MetaParameter;
 import ch.specchio.types.Sensor;
 import ch.specchio.types.Spectrum;
@@ -67,7 +54,7 @@ public class SpecchioUtil {
 	public SpecchioUtil() {
 		
 		try {
-			DbConfigUtil.loadDbConfig();
+			IOUtil.loadDbConfig();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -581,13 +568,27 @@ public class SpecchioUtil {
 		// One Spectrum
 		if(idList.size() == 1){
 			
+			int fileCount = 0;
 			for(MetaParameter mp : s.getMetadata().getEntries()){
 				
 				if(map.get(mp.getCategoryName()) == null) {
 					map.put(mp.getCategoryName(), new LinkedList<Pair<String,String>>());
 				}
-				map.get(mp.getCategoryName()).add(new Pair<>(mp.getAttributeName(), mp.getValue().toString()));
 				
+				String value = "";
+				if("PDFs".equals(mp.getCategoryName()) || "Pictures".equals(mp.getCategoryName())){
+					MetaFile mp_file = (MetaFile) mp;
+					try { 
+						String filename = "metaFile" + fileCount + mp_file.getDefaultFilenameExtension();
+						value = IOUtil.createTempFile(filename, mp_file);
+						fileCount++;
+					} catch(Exception e) {
+						value = mp.getValue().toString();
+					}
+				}
+				else value = mp.getValue().toString();
+					
+				map.get(mp.getCategoryName()).add(new Pair<>(mp.getAttributeName(), value));
 			}
 			
 		}
@@ -670,9 +671,6 @@ public class SpecchioUtil {
 					stats.calc_stats(vectorArray, start_ind, end_ind);
 
 					if (stats.standardDeviation() > 0){
-//						DecimalFormat df = new DecimalFormat("#,###################");
-//						df.setRoundingMode(RoundingMode.CEILING);
-//						maxY = Double.valueOf(df.format(stats.mean()+1*stats.standardDeviation()));
 						maxY = stats.mean()+1*stats.standardDeviation();
 					}
 				}
@@ -680,8 +678,6 @@ public class SpecchioUtil {
 			if(maxY == 0) maxY = getHighest(vectors);
 			
 			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName() + " " + (i+1), measurementUnit, wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds(), maxY));
-			
-//			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName() + " " + (i+1), "gugus", wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds(), maxY));
 		}
 		
 		return sdbList;
@@ -699,5 +695,5 @@ public class SpecchioUtil {
 		}
 		return max;
 	}
-
+	
 }

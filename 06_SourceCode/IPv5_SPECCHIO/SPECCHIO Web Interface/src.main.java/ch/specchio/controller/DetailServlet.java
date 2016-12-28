@@ -1,8 +1,6 @@
 package ch.specchio.controller;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import ch.specchio.model.SearchResultBean;
 import ch.specchio.model.SpaceDetailBean;
-import ch.specchio.util.ExportUtil;
+import ch.specchio.util.IOUtil;
 import ch.specchio.util.SpecchioUtil;
 
 import com.google.gson.Gson;
@@ -55,7 +53,7 @@ public class DetailServlet extends HttpServlet {
 			Type listType = new TypeToken<LinkedList<SpaceDetailBean>>(){}.getType();
 			LinkedList<SpaceDetailBean> spaceDetailBeanList = new Gson().fromJson(req.getParameter("spaceDetailBeanList"), listType);
 			
-			ExportUtil.createCsvExportZip(resp, spaceDetailBeanList);
+			IOUtil.createCsvExportZip(resp, spaceDetailBeanList, ",");
 		}
 		else handleRequest(req, resp);
 	}

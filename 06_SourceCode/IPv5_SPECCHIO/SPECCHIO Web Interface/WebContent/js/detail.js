@@ -101,6 +101,12 @@ function createMetaDataDiv(categoryAttributeMap){
 			var displayName = attribute.first;
 			var value = attribute.second;
 			
+			if("PDFs" == category)
+				value = '<a href="'+value+'" target="_blank"> Download PDF </a>';
+			else if("Pictures" == category)
+				value = '<a href="'+value+'" target="_blank">' +
+						'<img src="'+value+'" alt="Download Image">' +
+						'</a>';
 			
 			if(i < defaultDisplayedAttributes){
 				tbody.append(createAttributeTR(category, displayName, value));
