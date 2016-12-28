@@ -25,7 +25,8 @@ function createNavTab(spaceDetailBeanList){
 
 function createTabContent(spaceDetailBeanList){
 	var tabContent = $('<div class="tab-content"></div>');
-	tabContent.append('<div id="chart" class="spectralChart" style="margin: 0 auto; width: 80%;"></div>');
+	//tabContent.append('<div id="chart" class="spectralChart" style="margin: 0 auto; width: 80%;"></div>');
+	tabContent.append('<div class="row"><div class="col-md-2"></div><div id="chart" class="col-md-8"></div><div class="col-md-2"></div></div>');
 	
 	for(var i=0; i < spaceDetailBeanList.length; i++){
 		var sdb = spaceDetailBeanList[i];
@@ -81,14 +82,13 @@ function createChartArray(text, values){
 }
 
 function createMetaDataDiv(categoryAttributeMap){
-	var categories = $('<div></div>');
+	var categories = $('<article></article>');
 	var categoryCount = 0;
 	$.each(categoryAttributeMap, function(category, attributeList){
 		
-		var cssClass = categoryCount % 2 == 0 ? "container-left" : "container-right";
-		var container = $('<div class="'+cssClass+'"></div>');
+		var container = $('<section></section>');
 		
-		container.append('<h1>'+category+'</h1>');
+		container.append('<h2>'+category+'</h2>');
 		
 		var categoryDiv = $('<div id="category'+categoryCount+'"></div>');
 		
@@ -120,7 +120,7 @@ function createMetaDataDiv(categoryAttributeMap){
 		table.append(tbody);
 		if(attributeList.length > defaultDisplayedAttributes) {
 			table.append(hiddentbody);
-			var showAll = $('<input type="button" class="btn btn-xs btn-default" style="margin-left: 50%; margin-right; 50%;"  value="Show All" />');
+			var showAll = $('<input type="button" class="btn btn-sm btn-default" style="margin-left: 50%; margin-right; 50%;"  value="Show All" />');
 			showAll.click(function(){
 				if(hiddentbody.prop('hidden')) 
 					showAll.val('Show Less');
@@ -135,7 +135,6 @@ function createMetaDataDiv(categoryAttributeMap){
 //			categoryDiv.append('<div id="map"></div>');
 //			categoryDiv.append('<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&v=3&callback=initMap"></script>');
 //		}
-		categoryDiv.append('<hr/>')
 		container.append(categoryDiv);
 		categories.append(container);
 		categoryCount++;
@@ -162,10 +161,10 @@ function initMap(){
 function createAttributeTR(category, displayName, value){
 	var tr = $('<tr></tr>');
 	if(category == "Data Links" && value != "Multiple Values"){
-		tr.append('<td>'+displayName+':</td><td><a href="#" onclick="showLinkedSpectrum('+value+');">Show Linked Spectrum</a></td>');
+		tr.append('<td>'+displayName+':</td><td style="word-break:break-all;word-wrap:break-word;"><a href="#" onclick="showLinkedSpectrum('+value+');">Show Linked Spectrum</a></td>');
 	}
 	else {
-		tr.append('<td>'+displayName+':</td><td>'+value+'</td>');
+		tr.append('<td>'+displayName+':</td><td style="word-break:break-all;word-wrap:break-word;">'+value+'</td>');
 	}
 	return tr;
 }

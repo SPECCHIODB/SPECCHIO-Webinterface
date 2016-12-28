@@ -4,17 +4,6 @@ body {
 	background: none;
 }
 
-.container-left {
-	width: 49%;
-	margin-right: 2%;
-	float: left;
-}
-
-.container-right {
-	width: 49%;
-	float: right;
-}
-
 .full {
   background: url(../img/bg_Golden_curves.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
@@ -23,9 +12,155 @@ body {
   background-size: cover;
 }
 
+h2 {
+	margin-top: 0px;
+}
+
 #detail {
     border-radius: 10px;
     background: white;
     padding: 50px;
 }
 
+#space {
+	margin-top: 15px;
+}
+
+#pdf {
+	margin-bottom: 15px;
+}
+
+#space .row {
+	margin-top: 40px;
+	margin-bottom: 70px;
+}
+
+article {
+  -webkit-column-count: 2;
+     -moz-column-count: 2;
+          column-count: 2;
+  -webkit-column-width: 400px;
+     -moz-column-width: 400px;
+          column-width: 400px;
+  -webkit-column-gap:   4em;
+     -moz-column-gap:   4em;
+          column-gap:   4em;
+}
+
+section {
+  -webkit-column-break-inside: avoid;
+     -moz-column-break-inside: avoid;
+          column-break-inside: avoid;
+}
+
+.table {
+	margin-bottom: 40px;
+}
+
+.table tbody tr td {
+	vertical-align: bottom;
+}
+
+.table tbody {
+	border-bottom: 1px solid #ddd;
+}
+
+.table tbody+tbody {
+	border-top: 1px solid #ddd;
+}
+
+table .btn-default  {
+	border-top: 0px none transparent;
+	border-radius: 0px 0px 3px 3px;
+	border-color: #ddd;
+}
+
+
+@media print {
+	
+	body {
+		margin: 0px !important;
+		padding: 0px !important;
+		border: 0px !important;
+	}
+	
+	.h2 {
+		color: #000000 !important;
+		display: block;
+		page-break-inside: avoid;
+	}
+
+	#detail {
+		padding: 0px !padding;
+		-moz-padding: 0px !padding;
+	}
+	
+	.container {
+		margin: 0px !important;
+		padding: 0px !important;
+		border: 0px !important;
+	}
+	
+	.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    	color: #000000 !important;
+    	cursor: default !important;
+    	background-color: #fff !important;
+    	border: 1px solid #000000 !important;
+    	border-bottom-color: #ffffff !important;
+	}
+	
+	.nav-tabs {
+    	border-bottom: 1px solid #000000;
+	}
+	
+	.table tbody {
+		border-bottom: 1px solid #000000;
+	}
+
+	.table tbody+tbody {
+		border-top: 1px solid #000000;
+	}
+	
+	.table tbody tr td {
+		border-top: 1px solid #000000;
+	}
+
+	table .btn-default  {
+		border-top: 0px none transparent;
+		border-radius: 0px 0px 3px 3px;
+		border-color: #000000;
+	}
+	
+	article {
+	        margin-top: 70px;
+  -webkit-column-count: 2;
+     -moz-column-count: 2;
+          column-count: 2;
+  -webkit-column-width: 0px;
+     -moz-column-width: 0px;
+          column-width: 0px;
+  -webkit-column-gap:   4em;
+     -moz-column-gap:   4em;
+          column-gap:   4em;
+	}
+
+	section {
+  -webkit-column-break-inside: avoid;
+     -moz-column-break-inside: avoid;
+          column-break-inside: avoid;
+          display: block;
+          		page-break-inside: avoid;
+          
+	}
+
+	.footer {
+  		background-color: none;
+  		padding-top: 11px;
+  		bottom: 0;
+  		border-top: 0px none #000000 !important;
+  		position: fixed;
+ 		width: 100%;
+ 		display: none;
+	}
+	
+}
