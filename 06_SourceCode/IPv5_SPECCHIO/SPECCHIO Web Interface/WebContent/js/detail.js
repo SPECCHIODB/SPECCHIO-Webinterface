@@ -6,8 +6,6 @@ function init(){
 	space.append(createNavTab(spaceDetailBeanList));
 	space.append(createTabContent(spaceDetailBeanList));
 	createSpectralChart("chart", spaceDetailBeanList[0]);
-	//createAllSpectralCharts(spaceDetailBeanList);
-	
 }
 
 function createNavTab(spaceDetailBeanList){
@@ -25,7 +23,6 @@ function createNavTab(spaceDetailBeanList){
 
 function createTabContent(spaceDetailBeanList){
 	var tabContent = $('<div class="tab-content"></div>');
-	//tabContent.append('<div id="chart" class="spectralChart" style="margin: 0 auto; width: 80%;"></div>');
 	tabContent.append('<div class="row"><div class="col-md-2"></div><div id="chart" class="col-md-8"></div><div class="col-md-2"></div></div>');
 	
 	for(var i=0; i < spaceDetailBeanList.length; i++){
@@ -39,13 +36,6 @@ function createTabContent(spaceDetailBeanList){
 	}
 	
 	return tabContent;
-}
-
-function createAllSpectralCharts(spaceDetailBeanList) {
-	for(var i = 0; i < spaceDetailBeanList.length; i++){
-		var sdb = spaceDetailBeanList[i];
-		createSpectralChart("chart"+i, sdb);
-	}
 }
 
 function createSpectralChart(chartId, sdb){
@@ -105,7 +95,7 @@ function createMetaDataDiv(categoryAttributeMap){
 				value = '<a href="'+value+'" target="_blank"> Download PDF </a>';
 			else if("Pictures" == category)
 				value = '<a href="'+value+'" target="_blank">' +
-						'<img src="'+value+'" alt="Download Image">' +
+						'<img class="img-responsive" src="'+value+'" alt="Download Image">' +
 						'</a>';
 			
 			if(i < defaultDisplayedAttributes){
@@ -131,10 +121,6 @@ function createMetaDataDiv(categoryAttributeMap){
 			table.append(showAll);
 		}
 		categoryDiv.append(table);
-//		if(category =="Location") {
-//			categoryDiv.append('<div id="map"></div>');
-//			categoryDiv.append('<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&v=3&callback=initMap"></script>');
-//		}
 		container.append(categoryDiv);
 		categories.append(container);
 		categoryCount++;

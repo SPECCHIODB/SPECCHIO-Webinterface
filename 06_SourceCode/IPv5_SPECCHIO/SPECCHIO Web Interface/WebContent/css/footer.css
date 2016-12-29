@@ -1,16 +1,15 @@
 .footer {
   background-color: #ffffff;
-  padding-top: 12px;
+  padding-top: 11px;
   bottom: 0;
-  border: 1px;
-  border-color: #333333;
+  border-top: 1px solid #ddd;
   position: fixed;
   width: 100%;
 }
 
 /* Footer text centered for phones and tablets */
 @media (max-width: 991px) {
-	.footer p {
-		text-align: center;
-	}
+.footer p {
+text-align: center;
+}
 }
