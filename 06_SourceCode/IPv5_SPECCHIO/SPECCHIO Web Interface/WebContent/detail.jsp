@@ -34,6 +34,7 @@
 		<%@ include file="footer.html" %>
 	
 		<!-- js imports -->
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxVl6lkT-8txoP3nRxgVNeyfoJbhR-z74"></script>
 		<script src="js/jquery-2.1.4.min.js"></script>
         <script src="js/detail.js"></script>
         <script src="js/bootstrap.min.js"></script>

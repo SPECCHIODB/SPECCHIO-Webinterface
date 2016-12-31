@@ -12,9 +12,20 @@ public class SearchResultBean {
   	private String name;
   	private String fileName;
   	private String institute;
+  	private String longitude;
+  	private String latitude;
   	
 	public SearchResultBean(int id) {
 		this.id = id;
+		
+		acquisitionTime = null;
+		campaignName = null;
+		investigator = null;
+	  	name = null;
+	  	fileName = null;
+	  	institute = null;
+	  	longitude = null;
+	  	latitude = null;
 	}
 	
 	public int getId() {
@@ -58,6 +69,22 @@ public class SearchResultBean {
 	}
 	public void setInstitute(String institute) {
 		this.institute = institute;
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
 	}
 
 }

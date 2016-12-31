@@ -280,21 +280,6 @@ public class SpecchioUtil {
 		return ids;
 	}
 	
-	public List<SearchResultBean> getSearchResults(int page, List<Integer> spectrumIdList){
-		
-		ArrayList<Integer> subList = new ArrayList<>();
-		int startIndex = page * DISPLAYED_SEARCH_RESULTS;
-		int endIndex = startIndex + DISPLAYED_SEARCH_RESULTS;
-		
-		for(int i = startIndex; i < endIndex; i++){
-			if(i < spectrumIdList.size())
-				subList.add(spectrumIdList.get(i));
-			else break;
-		}
-		
-		return getAllSearchResults(subList);
-	}
-	
 	public List<SearchResultBean> getAllSearchResults(List<SearchRowBean> searchRowBeanList){
 		return getAllSearchResults(getSpectrumIdList(searchRowBeanList));
 	}
@@ -349,6 +334,8 @@ public class SpecchioUtil {
 		fillMetaParameter("Acquisition Time", getSetterName("Acquisition Time"), ids, srbList);
 		fillMetaParameter("Investigator", getSetterName("Investigator"), ids, srbList);
 		fillMetaParameter("File Name", getSetterName("File Name"), ids, srbList);
+		fillMetaParameter("Latitude", getSetterName("Latitude"), ids, srbList);
+		fillMetaParameter("Longitude", getSetterName("Longitude"), ids, srbList);
 		
 		// Campaign Name, User, Name & Institute
 		fillMetaParameterSpecialCases(ids, srbList);
@@ -641,20 +628,43 @@ public class SpecchioUtil {
 			
 			Space space = spaces[i]; 
 			
+			// Wavelength
 			ChartDataBean wavelength = new ChartDataBean("wavelength", getWavelength((SpectralSpace) space));
 			
+			// Vectors - we need a List of filename (description on chart) and all vector values
 			List<ChartDataBean> vectorList = new LinkedList<>();
 			MatlabAdaptedArrayList<Object> resultList = specchio_client.getMetaparameterValues(space.getSpectrumIds(), "File Name");
-			
 			double[][] vectors = getVectors((SpectralSpace) space);
 			for(int ii = 0; ii < vectors.length; ii++){
 				vectorList.add(new ChartDataBean(resultList.get(ii).toString(),vectors[ii]));
 			}
 			
+			// Latitude & Longitude for Map on detail.jsp
+			MatlabAdaptedArrayList<Object> lats = specchio_client.getMetaparameterValues(spectrumIdList, "Latitude");
+			MatlabAdaptedArrayList<Object> longs = specchio_client.getMetaparameterValues(spectrumIdList, "Longitude");
 			
+			List<Pair<Double, Double>> latLongList = new ArrayList<>();
+			if(lats.size() == longs.size()) {
+				for(int ii = 0; ii < lats.size(); ii++){
+					Object lat = lats.get(ii);
+					Object lng = longs.get(ii);
+					
+					if(lat != null && lng != null){
+						try{ // create a new latLong Pair
+							latLongList.add(new Pair<Double, Double>(
+									Double.parseDouble(lat.toString()), 
+									Double.parseDouble(lng.toString())));
+						} catch (NumberFormatException e) {
+							// don't add anything to the list 
+						}
+					}
+				}
+			}
+
+			// Get the maxY for the spectralchart on the details.jsp
 			String measurementUnit = ((SpectralSpace) space).getMeasurementUnit().getUnitName();
 			double maxY = 0;
-			if("Reflectance".equals(measurementUnit)){
+			if("Reflectance".equals(measurementUnit)){ // for Reflectance we calculate the maxY
 				// do statistics for VNIR
 				double vis_nir_start = 300;
 				double vis_nir_end = 1300;
@@ -675,9 +685,11 @@ public class SpecchioUtil {
 					}
 				}
 			}
+			// Otherwise we pick the highest vector as the maxY
 			if(maxY == 0) maxY = getHighest(vectors);
 			
-			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName() + " " + (i+1), measurementUnit, wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds(), maxY));
+			// add a new SpaceDetailBean to the List
+			sdbList.add(new SpaceDetailBean(space.getSpaceTypeName() + " " + (i+1), measurementUnit, wavelength, vectorList, getCategoryAttributeMap(space.getSpectrumIds()), space.getSpectrumIds(), latLongList, maxY));
 		}
 		
 		return sdbList;

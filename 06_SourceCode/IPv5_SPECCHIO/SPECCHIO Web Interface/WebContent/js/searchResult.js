@@ -10,6 +10,7 @@ function init(){
 		addTableRow(i, searchResultBeanList[i]);
 	}
 	
+	createMap();
 }
 
 function addTableRow(index, srb){
@@ -63,6 +64,44 @@ function handleCheckboxSelection(checkbox){
 	$("#showDetail").prop('disabled', selectCount == 0);
 }
 
+function createMap() {
+
+	var map = new google.maps.Map(document.getElementById('map'), {
+		zoom : 2,
+		center : new google.maps.LatLng(parseFloat(searchResultBeanList[0].latitude), parseFloat(searchResultBeanList[0].longitude))
+	});
+	
+	for(var i = 0; i < searchResultBeanList.length; i++){
+		(function(j, srb){
+			
+			if(srb.latitude != null && srb.latitude != "" && srb.longitude != null && srb.longitude != ""){
+				var temp = new google.maps.Marker({
+				    position: new google.maps.LatLng(parseFloat(srb.latitude), parseFloat(srb.longitude)),
+				    map: map,
+				    title: srb.fileName
+				});
+				temp.addListener('click', function() {
+					var selectedSearchResultBeanList = [];
+					selectedSearchResultBeanList[0] = srb;
+					submitForm(selectedSearchResultBeanList);
+				});
+			}
+			
+	    })(i, searchResultBeanList[i]); // pass the value of i
+	}
+	
+}
+
+function submitForm(selectedSearchResultBeanList){
+	var form = $("#detailForm");
+	
+	// replacing " with ' because of conflicts in servlet (/g = replace all ")
+	var json = JSON.stringify(selectedSearchResultBeanList).replace(/"/g, "'"); 
+	
+	form.append('<input type="hidden" name="selectedSearchResultBeanList" value="'+json+'"/>');
+	form.submit();
+}
+
 $(document).ready(function() {
 	
 	init();
@@ -81,13 +120,7 @@ $(document).ready(function() {
 			}
 		}
 		
-		var form = $("#detailForm");
-		
-		// replacing " with ' because of conflicts in servlet (/g = replace all ")
-		var json = JSON.stringify(selectedSearchResultBeanList).replace(/"/g, "'"); 
-		
-		form.append('<input type="hidden" name="selectedSearchResultBeanList" value="'+json+'"/>');
-		form.submit();
+		submitForm(selectedSearchResultBeanList)
 	});
 	
 });

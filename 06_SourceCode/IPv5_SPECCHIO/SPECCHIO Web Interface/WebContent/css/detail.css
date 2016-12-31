@@ -35,6 +35,10 @@ h2 {
 	margin-bottom: 70px;
 }
 
+#map {
+	height: 400px;
+}
+
 article {
   -webkit-column-count: 2;
      -moz-column-count: 2;

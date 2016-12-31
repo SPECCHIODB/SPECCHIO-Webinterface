@@ -6,6 +6,7 @@ function init(){
 	space.append(createNavTab(spaceDetailBeanList));
 	space.append(createTabContent(spaceDetailBeanList));
 	createSpectralChart("chart", spaceDetailBeanList[0]);
+	createMap(spaceDetailBeanList[0]);
 }
 
 function createNavTab(spaceDetailBeanList){
@@ -24,6 +25,7 @@ function createNavTab(spaceDetailBeanList){
 function createTabContent(spaceDetailBeanList){
 	var tabContent = $('<div class="tab-content"></div>');
 	tabContent.append('<div class="row"><div class="col-md-2"></div><div id="chart" class="col-md-8"></div><div class="col-md-2"></div></div>');
+	tabContent.append('<div class="row"><div class="col-md-2"></div><div id="map" class="col-md-8"></div><div class="col-md-2"></div></div>');
 	
 	for(var i=0; i < spaceDetailBeanList.length; i++){
 		var sdb = spaceDetailBeanList[i];
@@ -128,20 +130,27 @@ function createMetaDataDiv(categoryAttributeMap){
 	return categories;
 }
 
-function initMap(){
+function createMap(sdb) {
 	
-	var myLatLng = {lat: -25.363, lng: 131.044};
-
-	var map = new google.maps.Map(document.getElementById('map'), {
-		zoom: 4,
-		center: myLatLng
-	});
+	if(sdb.latLongList != undefined && sdb.latLongList.length > 0){
 	
-	var marker = new google.maps.Marker({
-		position: myLatLng,
-	    map: map,
-	    title: 'Hello World!'
-	});
+		var zoom = sdb.latLongList.length == 1 ? 4 : 2;
+	
+		var map = new google.maps.Map(document.getElementById('map'), {
+			zoom : zoom,
+			center : new google.maps.LatLng(sdb.latLongList[0].first, sdb.latLongList[0].second)
+		});
+		
+		for(var i = 0; i < sdb.latLongList.length; i++){
+			var latLong = sdb.latLongList[i];
+			
+			var temp = new google.maps.Marker({
+			    position: new google.maps.LatLng(latLong.first, latLong.second),
+			    map: map
+			});
+		}
+	}
+	else $("#map").hide();
 }
 
 function createAttributeTR(category, displayName, value){
@@ -183,6 +192,7 @@ $(document).ready(function() {
 	
 	$(".tab").click(function(){
 		createSpectralChart("chart", spaceDetailBeanList[this.id]);
+		createMap(spaceDetailBeanList[this.id]);
 	});
 	
 });
