@@ -1,5 +1,8 @@
 package ch.specchio.model;
 
+/**
+ * Wrapper-Class for an ch.specchio.types.Category object
+ */
 public class Category {
 
 	private ch.specchio.types.Category category;

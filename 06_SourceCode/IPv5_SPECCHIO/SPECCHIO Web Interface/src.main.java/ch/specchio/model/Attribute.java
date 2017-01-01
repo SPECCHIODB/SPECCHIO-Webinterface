@@ -1,5 +1,8 @@
 package ch.specchio.model;
 
+/**
+ * Wrapper-Class for an ch.specchio.types.attribute object
+ */
 public class Attribute implements Comparable<Attribute>{
 
 	private ch.specchio.types.attribute attribute;

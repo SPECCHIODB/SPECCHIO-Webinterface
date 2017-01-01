@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This bean contains the information for a space tab on the detail.jsp.
+ * The space type name, measurement unit, chart data for all spectra in this
+ * space, latitude and longitudes for the map and all meta information for each
+ * spectrum.
+ */
 public class SpaceDetailBean {
 
 	private String spaceTypeName;

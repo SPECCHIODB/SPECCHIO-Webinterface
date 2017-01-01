@@ -1,5 +1,8 @@
 package ch.specchio.model;
 
+/**
+ * A Pair of Objects.
+ */
 public class Pair <F,S> {
 
 	private F first;

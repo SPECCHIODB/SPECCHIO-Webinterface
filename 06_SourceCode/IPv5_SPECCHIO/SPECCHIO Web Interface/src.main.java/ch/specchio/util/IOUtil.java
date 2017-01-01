@@ -22,12 +22,18 @@ import ch.specchio.types.MetaFile;
 
 public class IOUtil {
 	
-	public static void createCsvExportZip(HttpServletResponse resp, List<SpaceDetailBean> sdbList, String separator) throws IOException{
+	/**
+	 * This method creates a ZIP File containing a CSV File for each SpaceDetailBean from the given sdbList.
+	 * The file will be written to the OutputStream of the given HttpServletResponse.
+	 * 
+	 * @param resp - the HttpServletResponse
+	 * @param sdbList - the list of SpaceDetailBeans that should be exported
+	 * @param separator - separators between values in csv file
+	 * @throws Exception 
+	 */
+	public static void createCsvExportZip(HttpServletResponse resp, List<SpaceDetailBean> sdbList, String separator) throws Exception {
 		SpecchioUtil util = new SpecchioUtil();
 		
-		resp.setContentType("application/zip");
-		resp.setHeader("Content-Disposition", "attachment; filename=\"specchio_csv_export.zip\"");
-	    	
 		ZipOutputStream out = new ZipOutputStream(resp.getOutputStream());
         for(SpaceDetailBean sdb : sdbList){
         	
@@ -68,6 +74,13 @@ public class IOUtil {
         
 	}
 	
+	/**
+	 * Creates a File with the given filename and the values from the given mp_file.
+	 * Used for PDFs and Images on Detail view.
+	 * @return the filename
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
 	public static String createTempFile(String filename, MetaFile mp_file) throws IOException, URISyntaxException{
 		
 		File class_dir = new File(IOUtil.class.getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -103,24 +116,17 @@ public class IOUtil {
 	 */
 	public static void loadDbConfig() throws IOException, URISyntaxException {
 
-		try {
+		File class_dir = new File(IOUtil.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+		File conf_file = new File(class_dir.getParent());
 
-			File class_dir = new File(IOUtil.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-			File conf_file = new File(class_dir.getParent());
-
-			// Get path of current folder as string.
-			String pathCurrentClass = conf_file.getPath();
-			
-			// Read connection string
-			String connectionString = readDbConnectionString(pathCurrentClass);
-			
-			// Write connection string
-			writeDbConnectionString(pathCurrentClass, connectionString);
-
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// Get path of current folder as string.
+		String pathCurrentClass = conf_file.getPath();
+		
+		// Read connection string
+		String connectionString = readDbConnectionString(pathCurrentClass);
+		
+		// Write connection string
+		writeDbConnectionString(pathCurrentClass, connectionString);
 
 	}
 	
@@ -128,9 +134,9 @@ public class IOUtil {
 	 * This method reads the database connection settings and returns it as string.
 	 * @param pathString
 	 * @return connectionString
-	 * @throws FileNotFoundException
+	 * @throws IOException 
 	 */
-	private static String readDbConnectionString(String pathString) throws FileNotFoundException {
+	private static String readDbConnectionString(String pathString) throws IOException {
 
 		String pathCurrentClass = pathString;
 		String connectionString = null;
@@ -153,22 +159,17 @@ public class IOUtil {
 		try {
 			StringBuilder sb = new StringBuilder();
 			String line = br.readLine();
-
+	
 			while (line != null) {
 				sb.append(line);
 				sb.append(System.lineSeparator());
 				line = br.readLine();
 			}
 			connectionString = sb.toString();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			br.close();
 		}
+			
 		return connectionString;
 	}
 	

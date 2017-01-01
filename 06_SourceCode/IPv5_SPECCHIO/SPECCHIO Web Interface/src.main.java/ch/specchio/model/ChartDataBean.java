@@ -1,5 +1,9 @@
 package ch.specchio.model;
 
+/**
+ * This Bean is used to create the Chart on the Detail view.
+ * It contains the name of a dataset (ex. filename) and the values in a double array.
+ */
 public class ChartDataBean {
 
 	String name;

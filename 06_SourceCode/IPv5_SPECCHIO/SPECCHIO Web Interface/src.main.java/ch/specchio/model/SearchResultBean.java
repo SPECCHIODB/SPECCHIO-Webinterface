@@ -1,10 +1,17 @@
 package ch.specchio.model;
 
-
+/**
+ *	This bean contains the information needed for the searchResult.jsp.
+ *	The data for each row of the Search Result List and the longitude and latitude
+ *	for the markers on the Search Result Map.
+ *	It also contains the spectrum id.
+ */
 public class SearchResultBean {
 	
 	private int id;
-
+  	private String longitude;
+  	private String latitude;
+  	
 	//	--- Displayed in Result List ---
 	private String acquisitionTime;
 	private String campaignName;
@@ -12,8 +19,7 @@ public class SearchResultBean {
   	private String name;
   	private String fileName;
   	private String institute;
-  	private String longitude;
-  	private String latitude;
+
   	
 	public SearchResultBean(int id) {
 		this.id = id;

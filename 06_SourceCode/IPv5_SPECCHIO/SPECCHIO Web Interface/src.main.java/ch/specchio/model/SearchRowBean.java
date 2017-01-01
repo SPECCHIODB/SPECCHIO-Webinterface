@@ -3,6 +3,10 @@ package ch.specchio.model;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ *	This bean contains the information for a search row on the search.jsp.
+ *	It contains the user selections, user inputs and validation information.
+ */
 public class SearchRowBean {
 	
 	private Category selectedCategory;

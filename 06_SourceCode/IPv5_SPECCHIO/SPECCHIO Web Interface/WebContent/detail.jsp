@@ -18,8 +18,8 @@
 		
 		<div id="detail" class="container">
 				<form id="exportForm" method="post" action="detail">
-					<input id="export" value="Download ZIP" type="button" class="btn btn-primary" style="float:right;"/>
-					<input id="pdf" value="Print PDF" type="button" class="btn btn-primary" style="float:right; margin-right: 5px;"/>
+					<input id="export" value="Download ZIP" type="button" class="btn btn-primary hidden-print" style="float:right;"/>
+					<input id="pdf" value="Print PDF" type="button" class="btn btn-primary hidden-print" style="float:right; margin-right: 5px;"/>
 					<!-- jQuery adds hiddenfield here -->
 				</form>
 				<div id="space">

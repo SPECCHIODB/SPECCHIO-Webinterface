@@ -26,7 +26,7 @@ function init(){
 			showMessageBox("success", "glyphicon-ok-sign", searchResultCount + " spectra have been found.", "Add or Modify filters to search for spectra. Press 'Show Spectra' to have a look at all found spectra.");
 	}
 	else {
-		showMessageBox("info", "glyphicon-info-sign", "No spectrum has been found.", "Add or Modify filters to search for spectra.")
+		showMessageBox("info", "glyphicon-info-sign", "No spectrum has been found.", "Add or Modify filters, then press 'Search' to search for spectra.")
 	}
 	
 	addTitleRow();
@@ -159,10 +159,12 @@ function createInputSection(srb){
 		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="text" class="form-control" style="'+validStyleInput1+'"/>');
 	}
 	else if(dsf == 'int_val' || dsf == 'double_val'){
-		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="from" class="form-control inputFrom" style="'+validStyleInput1+'"/><input type="text" name="userInput2_'+rowNr+'" value="'+userInput2+'" placeholder="to" class="form-control inputTo" style="'+validStyleInput2+'"/>');
+		section.append('<input type="text" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="from" class="form-control inputFrom" style="'+validStyleInput1+'"/>');
+		section.append('<input type="text" name="userInput2_'+rowNr+'" value="'+userInput2+'" placeholder="to" class="form-control inputTo" style="'+validStyleInput2+'"/>');
 	}
 	else if(dsf == 'datetime_val'){
-		section.append('<input type="date" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="yyyy-mm-dd" class="form-control" style="'+validStyleInput1+'"/>');
+		section.append('<input type="date" name="userInput1_'+rowNr+'" value="'+userInput1+'" placeholder="from (yyyy-mm-dd)" class="form-control inputFrom" style="'+validStyleInput1+'"/>');
+		section.append('<input type="date" name="userInput2_'+rowNr+'" value="'+userInput2+'" placeholder="to (yyyy-mm-dd)" class="form-control inputTo" style="'+validStyleInput2+'"/>');
 	}
 	else if(dsf == 'drop_down' || dsf == 'taxonomy_id'){
 		var select = $('<select name="userInput1_'+rowNr+'" class="btn btn-default dropdown-toggle"></select>');
@@ -223,10 +225,15 @@ $(document).ready(function() {
 		$("#showButton").prop('disabled', true);
 	});
 	
+	$("select").change(function(){
+		$("#showButton").prop('disabled', true);
+	});
+	
 	$("input").keypress(function (e) {
+	  // Submit Form when pressing Enter in an input field
 	  if (e.which == 13) {
 		submitSearchForm();
-	    return false;    //<---- Add this line
+	    return false;
 	  }
 	});
 	
