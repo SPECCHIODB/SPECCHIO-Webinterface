@@ -242,7 +242,8 @@ public class SpecchioUtil {
 	}
 
 	/**
-	 * 
+	 * returns a List of all spectrum id's that were found for the given search criteria.
+	 * @param searchRowBeanList - contains the search criteria of each row from the search view
 	 */
 	public ArrayList<Integer> getSpectrumIdList(List<SearchRowBean> searchRowBeanList) throws SPECCHIOClientException {
 		ArrayList<Integer> ids = new ArrayList<>();
