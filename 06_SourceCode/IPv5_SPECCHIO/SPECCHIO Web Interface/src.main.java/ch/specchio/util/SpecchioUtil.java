@@ -143,7 +143,8 @@ public class SpecchioUtil {
 	
 	/**
 	 * returns an Attribute Object for the given attribute name and category name
-	 * or null if no such attribute exists inside the given category
+	 * or the first attribute for that category if no such attribute exists inside
+	 * the given category
 	 */
 	public Attribute getAttribute(String attribute, String category) throws SPECCHIOClientException {
 		if(attribute != null) {
@@ -152,7 +153,14 @@ public class SpecchioUtil {
 					return a;
 			}
 		}
-		return null;
+		return getFirstAttribute(category);
+	}
+
+	/**
+	 * returns the first attribute for the given category
+	 */
+	private Attribute getFirstAttribute(String category){
+		return getAttributeList(category).isEmpty() ? null : getAttributeList(category).get(0);
 	}
 	
 	/**

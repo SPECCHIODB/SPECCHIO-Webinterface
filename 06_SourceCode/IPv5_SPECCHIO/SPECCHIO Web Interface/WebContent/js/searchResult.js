@@ -66,13 +66,26 @@ function handleCheckboxSelection(checkbox){
 
 function createMap() {
 
+	var subList = [];
+	var index = 0;
+	for(var i = 0; i < searchResultBeanList.length; i++){
+		var srb = searchResultBeanList[i];
+		if(srb.latitude != null && srb.latitude != "" && srb.longitude != null && srb.longitude != ""){
+			subList[index] = srb;
+			index++;
+		}
+	}
+	
+	var centerLat = subList.length > 0 ? parseFloat(subList[0].latitude) : 0;
+	var centerLng = subList.length > 0 ? parseFloat(subList[0].longitude) : 0;
+	
 	var map = new google.maps.Map(document.getElementById('map'), {
 		zoom : 2,
-		center : new google.maps.LatLng(parseFloat(searchResultBeanList[0].latitude), parseFloat(searchResultBeanList[0].longitude))
+		center : new google.maps.LatLng(centerLat, centerLng)
 	});
 	
-	for(var i = 0; i < searchResultBeanList.length; i++){
-		(function(j, srb){
+	for(var i = 0; i < subList.length; i++){
+		(function(srb){
 			
 			if(srb.latitude != null && srb.latitude != "" && srb.longitude != null && srb.longitude != ""){
 				var temp = new google.maps.Marker({
@@ -87,7 +100,7 @@ function createMap() {
 				});
 			}
 			
-	    })(i, searchResultBeanList[i]); // pass the value of i
+	    })(subList[i]); // pass the value of i
 	}
 	
 }
