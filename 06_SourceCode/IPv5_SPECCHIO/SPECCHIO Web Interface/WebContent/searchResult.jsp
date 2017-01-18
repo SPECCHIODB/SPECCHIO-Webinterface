@@ -67,7 +67,6 @@
         
 		<script type="text/javascript">
 			var searchResultBeanList = ${srbList};
-			//var spectrumIdList = ${idList};
 		</script> 
 
 		<%@ include file="footer.html" %>

@@ -1,7 +1,11 @@
-var selectedCheckboxes;
-var selectCount;
-function init(){
+// global variables
+var selectedCheckboxes;	// contains all selected checkboxes
+var selectCount;		// count of selected checkboxes
 
+/**
+ * initial settings and function calls
+ */
+function init(){
 	selectedCheckboxes = [];
 	selectCount = 0;
 	$("#showDetail").prop('disabled', true);
@@ -13,11 +17,17 @@ function init(){
 	createMap();
 }
 
+/**
+ * adds a table row with the given index for the given SearchResultBean
+ */
 function addTableRow(index, srb){
 	var tbody = $("tbody");
 	tbody.append(createTableRow(index, srb));
 }
 
+/**
+ * creates a table row with the given index for the given SearchResultBean
+ */
 function createTableRow(index, srb){
 	var tableRow = $('<tr></tr>');
 	
@@ -36,6 +46,9 @@ function createTableRow(index, srb){
 	return tableRow;
 }
 
+/**
+ * creates one table data tag containing the given value
+ */
 function createTableData(tableRow, value){
 	var tableData = $('<td></td>');
 	tableData.click(function(){
@@ -50,6 +63,9 @@ function createTableData(tableRow, value){
 	return tableData;
 }
 
+/**
+ * called when checkbox or tablerow is clicked
+ */
 function handleCheckboxSelection(checkbox){
 	
 	var checked = checkbox.prop("checked");
@@ -62,13 +78,20 @@ function handleCheckboxSelection(checkbox){
 		selectCount--;
 	}
 	
+	// disable showDetail button if no checkboxes are selected
 	$("#showDetail").prop('disabled', selectCount == 0);
 }
 
+/**
+ * Creates the search result map with a marker for each spectra that has a latitude and longitude.
+ */
 function createMap() {
 
 	var subList = [];
 	var index = 0;
+	
+	// get all rows that contain a latitude and longitude.
+	// those will be displayed as markers on the map.
 	for(var i = 0; i < searchResultBeanList.length; i++){
 		var srb = searchResultBeanList[i];
 		if(srb.latitude != null && srb.latitude != "" && srb.longitude != null && srb.longitude != ""){
@@ -77,14 +100,18 @@ function createMap() {
 		}
 	}
 	
+	// set the center of the map to the first marker
 	var centerLat = subList.length > 0 ? parseFloat(subList[0].latitude) : 0;
 	var centerLng = subList.length > 0 ? parseFloat(subList[0].longitude) : 0;
 	
+	// create the map with zoom level 2
 	var map = new google.maps.Map(document.getElementById('map'), {
 		zoom : 2,
 		center : new google.maps.LatLng(centerLat, centerLng)
 	});
 	
+	// for each row with lat and long we create a marker and add it to the map
+	// on click the detail page will be displayed for that row
 	for(var i = 0; i < subList.length; i++){
 		(function(srb){
 			
@@ -106,6 +133,9 @@ function createMap() {
 	
 }
 
+/**
+ * adds hiddenfields and submits the detailForm
+ */
 function submitForm(selectedSearchResultBeanList){
 	var form = $("#detailForm");
 	
@@ -117,6 +147,9 @@ function submitForm(selectedSearchResultBeanList){
 	form.submit();
 }
 
+/**
+ * called initially on page load
+ */
 $(document).ready(function() {
 	
 	init();
@@ -128,6 +161,7 @@ $(document).ready(function() {
 		var selectedSearchResultBeanList = [];
 		var index = 0;
 
+		// add all selected SearchResultBeans to a list to send it to the java backend
 		for(var i = 0; i < selectedCheckboxes.length; i++){
 			if(selectedCheckboxes[i] != undefined) {
 				selectedSearchResultBeanList[index] = searchResultBeanList[selectedCheckboxes[i].val()];

@@ -1,7 +1,11 @@
-var defaultDisplayedAttributes = 5;
+// amount of attributes always displayed per category
+// if there are more attributes a show all button will be added
+var defaultDisplayedAttributes = 5; 
 
+/**
+ * initial settings and function calls
+ */
 function init(){
-	
 	var space = $("#space");
 	space.append(createNavTab(spaceDetailBeanList));
 	space.append(createTabContent(spaceDetailBeanList));
@@ -9,6 +13,9 @@ function init(){
 	createMap(spaceDetailBeanList[0]);
 }
 
+/**
+ * Creates the navigation with a tab for each spectrum.
+ */
 function createNavTab(spaceDetailBeanList){
 	var navTab = $('<ul class="nav nav-tabs"></ul>');
 		
@@ -22,6 +29,10 @@ function createNavTab(spaceDetailBeanList){
 	return navTab;
 }
 
+/**
+ * Creates the content of each tab.
+ * The content of the selected tab will be displayed.
+ */
 function createTabContent(spaceDetailBeanList){
 	var tabContent = $('<div class="tab-content"></div>');
 	tabContent.append('<div class="row"><div class="col-md-2"></div><div id="chart" class="col-md-8"></div><div class="col-md-2"></div></div>');
@@ -40,6 +51,9 @@ function createTabContent(spaceDetailBeanList){
 	return tabContent;
 }
 
+/**
+ * Creates the highchart for all spectra of the given space detail bean.
+ */
 function createSpectralChart(chartId, sdb){
 	$(function () { 
 	    var myChart = Highcharts.chart(chartId, {
@@ -67,23 +81,19 @@ function createSpectralChart(chartId, sdb){
 	});
 }
 
-function createChartArray(text, values){
-	var array = [values.length + 1];
-	array[0] = text;
-	for(var i = 0; i < values.length; i++){
-		array[i+1] = values[i];
-	}
-	return array;
-}
-
+/**
+ * Creates the div containing all Meta Data information of that space detail bean.
+ */
 function createMetaDataDiv(categoryAttributeMap){
 	var categories = $('<article></article>');
 	var categoryCount = 0;
+	
+	// iterating over each category with its attributes
 	$.each(categoryAttributeMap, function(category, attributeList){
 		
 		var container = $('<section></section>');
 		
-		container.append('<h2>'+category+'</h2>');
+		container.append('<h2>'+category+'</h2>'); // add title for category
 		
 		var categoryDiv = $('<div id="category'+categoryCount+'"></div>');
 		
@@ -91,32 +101,34 @@ function createMetaDataDiv(categoryAttributeMap){
 		var tbody = $('<tbody></tbody>');
 		var hiddentbody = $('<tbody hidden></tbody>');
 		
-		for(var i = 0; i < attributeList.length; i++){
+		for(var i = 0; i < attributeList.length; i++){ // iterate over attributes
 			var attribute = attributeList[i];
-			var displayName = attribute.first;
-			var value = attribute.second;
+			var displayName = attribute.first; 	// attribute name
+			var value = attribute.second;		// attribute value
 			
-			if("PDFs" == category)
+			if("PDFs" == category) // for pdfs we display a download link
 				value = '<a href="'+value+'" target="_blank"> Download PDF </a>';
-			else if("Pictures" == category)
+			else if("Pictures" == category) // for pictures we display the picture and add a download link to it
 				value = '<a href="'+value+'" target="_blank">' +
 						'<img class="img-responsive" src="'+value+'" alt="Download Image">' +
 						'</a>';
 			
+			// change the format of dates to a nicer display format
 			if("Acquisition Time" == displayName || "Loading Time" == displayName || "Sample Collection Date" == displayName){
 				value = changeDateFormat(value);
 			}
 			
+			// display first x attributes
 			if(i < defaultDisplayedAttributes){
 				tbody.append(createAttributeTR(category, displayName, value));
 			}
-			else{
+			else{ // other attributes will be hidden until the show all button is pressed
 				hiddentbody.append(createAttributeTR(category, displayName, value));
 			}
 		}
 		
-		
 		table.append(tbody);
+		// add show all button if this category has a lot of attributes
 		if(attributeList.length > defaultDisplayedAttributes) {
 			table.append(hiddentbody);
 			var showAll = $('<input type="button" class="btn btn-sm btn-default" style="margin-left: 50%; margin-right; 50%;"  value="Show All" />');
@@ -137,6 +149,9 @@ function createMetaDataDiv(categoryAttributeMap){
 	return categories;
 }
 
+/**
+ * changes the format "2000-07-14T13:15:15:111Z" to "2000-07-14 13:15:15".
+ */
 function changeDateFormat(value){
 	// try to change dateformat from "2000-07-14T13:15:15:111Z" to "2000-07-14 13:15:15"
 	var indexT = value.indexOf("T");
@@ -147,11 +162,16 @@ function changeDateFormat(value){
 	else return date+" "+time;
 }
 
+/**
+ * Creates the search result map with a marker for each spectra, of the current space,
+ * that has a latitude and longitude.
+ */
 function createMap(sdb) {
 	
 	if(sdb.latLongList != undefined && sdb.latLongList.length > 0){
 	
-		var zoom = sdb.latLongList.length == 1 ? 4 : 2;
+		// if there is only one marker we zoom in further
+		var zoom = sdb.latLongList.length == 1 ? 4 : 2; 
 	
 		var map = new google.maps.Map(document.getElementById('map'), {
 			zoom : zoom,
@@ -167,7 +187,7 @@ function createMap(sdb) {
 			});
 		}
 	}
-	else $("#map").hide();
+	else $("#map").hide(); // hide the map div if there are no spectra with lat and long
 }
 
 function createAttributeTR(category, displayName, value){
@@ -181,12 +201,19 @@ function createAttributeTR(category, displayName, value){
 	return tr;
 }
 
+/**
+ * creates a hiddenfield with the given spectrum id and submits the detailform.
+ * the page will be reloaded with the information of the given spectrum.
+ */
 function showLinkedSpectrum(spectrumId){
 	var form = $("#detailForm");
 	form.append('<input type="hidden" name="linkedSpectrumId" value="'+spectrumId+'"/>');
 	form.submit();
 }
 
+/**
+ * called initially on page load
+ */
 $(document).ready(function() {
 	
 	init();
