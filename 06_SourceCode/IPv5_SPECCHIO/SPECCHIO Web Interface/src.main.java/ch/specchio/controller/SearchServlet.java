@@ -103,7 +103,7 @@ public class SearchServlet extends HttpServlet {
 				rd.forward(req, resp);
 			}
 		} 
-		catch(SPECCHIOClientException e) {
+		catch(Exception e) {
 			showErrorPage("There was a problem while processing your request.", "Please try again later or contact the system administrator.", req, resp);
 		}
 	}
@@ -122,7 +122,7 @@ public class SearchServlet extends HttpServlet {
 	 * Checks whether the user inputs in the given SearchRowBean are valid.
 	 * @return true if no validation errors were found, false otherwise.
 	 */
-	private boolean validate(SearchRowBean srb) {
+	private boolean validate(SearchRowBean srb) throws Exception {
 		// Full Text Search may contain anything
 		if ("Full Text Search".equals(srb.getSelectedCategory().getName())) return true;
 		

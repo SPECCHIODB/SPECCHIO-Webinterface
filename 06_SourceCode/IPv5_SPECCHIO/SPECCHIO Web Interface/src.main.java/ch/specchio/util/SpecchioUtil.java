@@ -1,8 +1,10 @@
 package ch.specchio.util;
 
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -390,6 +392,18 @@ public class SpecchioUtil {
 		fillMetaParameter("File Name", ids, srbList);
 		fillMetaParameter("Latitude", ids, srbList);
 		fillMetaParameter("Longitude", ids, srbList);
+		
+		for(SearchResultBean srb : srbList){
+			try{
+				// format "2000-07-14T13:15:15:111Z" -> "2000-07-14 13:15:15"
+				SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+				SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date date = fromFormat.parse(srb.getAcquisitionTime());
+				srb.setAcquisitionTime(toFormat.format(date));
+			}catch(Exception e){
+				// leave format as it is
+			}
+		}
 		
 		// fill meta parameter's for special cases - Campaign Name, User, Name & Institute
 		fillMetaParameterSpecialCases(ids, srbList);

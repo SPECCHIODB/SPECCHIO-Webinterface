@@ -1,7 +1,7 @@
 var selectedCheckboxes;
 var selectCount;
 function init(){
-	
+
 	selectedCheckboxes = [];
 	selectCount = 0;
 	$("#showDetail").prop('disabled', true);
@@ -51,6 +51,7 @@ function createTableData(tableRow, value){
 }
 
 function handleCheckboxSelection(checkbox){
+	
 	var checked = checkbox.prop("checked");
 	if(checked) {
 		selectedCheckboxes[checkbox.val()] = checkbox;
@@ -111,7 +112,8 @@ function submitForm(selectedSearchResultBeanList){
 	// replacing " with ' because of conflicts in servlet (/g = replace all ")
 	var json = JSON.stringify(selectedSearchResultBeanList).replace(/"/g, "'"); 
 	
-	form.append('<input type="hidden" name="selectedSearchResultBeanList" value="'+json+'"/>');
+	$("#srbList").remove();
+	form.append('<input type="hidden" id="srbList" name="selectedSearchResultBeanList" value="'+json+'"/>');
 	form.submit();
 }
 

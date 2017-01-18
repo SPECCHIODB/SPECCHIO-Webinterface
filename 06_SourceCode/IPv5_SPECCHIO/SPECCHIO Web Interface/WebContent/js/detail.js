@@ -51,6 +51,9 @@ function createSpectralChart(chartId, sdb){
 	            text: 'Spectrum Plot'
 	        },
 	        xAxis: {
+	            title: {
+	                text: 'Wavelength [nm]'
+	            },
 	            categories: sdb.wavelength.data
 	        },
 	        yAxis: {
@@ -100,6 +103,10 @@ function createMetaDataDiv(categoryAttributeMap){
 						'<img class="img-responsive" src="'+value+'" alt="Download Image">' +
 						'</a>';
 			
+			if("Acquisition Time" == displayName || "Loading Time" == displayName || "Sample Collection Date" == displayName){
+				value = changeDateFormat(value);
+			}
+			
 			if(i < defaultDisplayedAttributes){
 				tbody.append(createAttributeTR(category, displayName, value));
 			}
@@ -128,6 +135,16 @@ function createMetaDataDiv(categoryAttributeMap){
 		categoryCount++;
 	});
 	return categories;
+}
+
+function changeDateFormat(value){
+	// try to change dateformat from "2000-07-14T13:15:15:111Z" to "2000-07-14 13:15:15"
+	var indexT = value.indexOf("T");
+	var indexZ = value.indexOf(".000Z")
+	var date = value.substring(0, indexT);
+	var time = value.substring(indexT+1, indexZ);
+	if(date == "" || time == "") return value;
+	else return date+" "+time;
 }
 
 function createMap(sdb) {

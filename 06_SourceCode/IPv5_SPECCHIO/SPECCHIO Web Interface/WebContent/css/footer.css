@@ -5,6 +5,7 @@
   border-top: 1px solid #ddd;
   position: fixed;
   width: 100%;
+  z-index: 5;
 }
 
 /* Footer text centered for phones and tablets */

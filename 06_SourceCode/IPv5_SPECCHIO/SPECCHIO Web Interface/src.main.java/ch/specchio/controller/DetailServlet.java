@@ -54,7 +54,7 @@ public class DetailServlet extends HttpServlet {
 			RequestDispatcher rd = req.getRequestDispatcher("/detail.jsp"); // show detail.jsp
 			rd.forward(req, resp);
 		} 
-		catch(SPECCHIOClientException e){ // if the API throws an Exception we show the error page
+		catch(Exception e){ // if the API throws an Exception we show the error page
 			showErrorPage("There was a problem while processing your request.", "Please try again later or contact the system administrator.", req, resp);
 		}
 	}

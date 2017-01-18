@@ -47,8 +47,6 @@
 			</div>
 		</div>
 		
-		
-		
 		<form id="detailForm"  method="post" action="detail"> 
 			<!-- jQuery adds hiddenfield here -->
 		</form>
