@@ -35,7 +35,7 @@ function createNavTab(spaceDetailBeanList){
  */
 function createTabContent(spaceDetailBeanList){
 	var tabContent = $('<div class="tab-content"></div>');
-	tabContent.append('<div class="row"><div class="col-md-2"></div><div id="chart" class="col-md-8"></div><div class="col-md-2"></div></div>');
+	tabContent.append('<div class="row"><div class="col-md-2"></div><div class="col-md-8"><div id="chart"></div></div><div class="col-md-2"></div></div>');
 	tabContent.append('<div class="row"><div class="col-md-2"></div><div id="map" class="col-md-8"></div><div class="col-md-2"></div></div>');
 	
 	for(var i=0; i < spaceDetailBeanList.length; i++){
@@ -113,11 +113,6 @@ function createMetaDataDiv(categoryAttributeMap){
 						'<img class="img-responsive" src="'+value+'" alt="Download Image">' +
 						'</a>';
 			
-			// change the format of dates to a nicer display format
-			if("Acquisition Time" == displayName || "Loading Time" == displayName || "Sample Collection Date" == displayName){
-				value = changeDateFormat(value);
-			}
-			
 			// display first x attributes
 			if(i < defaultDisplayedAttributes){
 				tbody.append(createAttributeTR(category, displayName, value));
@@ -147,19 +142,6 @@ function createMetaDataDiv(categoryAttributeMap){
 		categoryCount++;
 	});
 	return categories;
-}
-
-/**
- * changes the format "2000-07-14T13:15:15:111Z" to "2000-07-14 13:15:15".
- */
-function changeDateFormat(value){
-	// try to change dateformat from "2000-07-14T13:15:15:111Z" to "2000-07-14 13:15:15"
-	var indexT = value.indexOf("T");
-	var indexZ = value.indexOf(".000Z")
-	var date = value.substring(0, indexT);
-	var time = value.substring(indexT+1, indexZ);
-	if(date == "" || time == "") return value;
-	else return date+" "+time;
 }
 
 /**

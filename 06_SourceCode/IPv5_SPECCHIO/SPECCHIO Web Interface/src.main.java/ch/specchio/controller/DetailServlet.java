@@ -55,6 +55,7 @@ public class DetailServlet extends HttpServlet {
 			rd.forward(req, resp);
 		} 
 		catch(Exception e){ // if the API throws an Exception we show the error page
+			e.printStackTrace();
 			showErrorPage("There was a problem while processing your request.", "Please try again later or contact the system administrator.", req, resp);
 		}
 	}

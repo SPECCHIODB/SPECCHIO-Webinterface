@@ -32,6 +32,7 @@ import ch.specchio.spaces.SpectralSpace;
 import ch.specchio.types.Campaign;
 import ch.specchio.types.CategoryTable;
 import ch.specchio.types.ConflictInfo;
+import ch.specchio.types.ConflictStruct;
 import ch.specchio.types.ConflictTable;
 import ch.specchio.types.InstrumentDescriptor;
 import ch.specchio.types.MatlabAdaptedArrayList;
@@ -114,7 +115,7 @@ public class SpecchioUtil {
 			list.add(new Attribute("","string_val"));
 			return list;
 		}
-		// the most watned attributes
+		// the most wanted attributes
 		else if(MOST_WANTED.equals(category)){
 			return getMostWantedAttributes();
 		}
@@ -385,30 +386,73 @@ public class SpecchioUtil {
 		for (Integer id : ids){
 			srbList.add(new SearchResultBean(id));
 		}
-		 
-		// fill meta paramater's for the given attributes
-		fillMetaParameter("Acquisition Time", ids, srbList);
-		fillMetaParameter("Investigator", ids, srbList);
-		fillMetaParameter("File Name", ids, srbList);
-		fillMetaParameter("Latitude", ids, srbList);
-		fillMetaParameter("Longitude", ids, srbList);
 		
+		// these attributes are displayed on the search result page
+		List<String> resultTableAttributes = new ArrayList<String>();
+		resultTableAttributes.add("Acquisition Time");
+		resultTableAttributes.add("Investigator");
+		resultTableAttributes.add("File Name");
+		resultTableAttributes.add("Latitude");
+		resultTableAttributes.add("Longitude");
+		
+		// fill meta parameter's for the above defined attributes
+		fillMetaParameters(resultTableAttributes, ids, srbList);
+		
+		// change format of Acquisition Time for each bean
 		for(SearchResultBean srb : srbList){
-			try{
-				// format "2000-07-14T13:15:15:111Z" -> "2000-07-14 13:15:15"
-				SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-				SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date date = fromFormat.parse(srb.getAcquisitionTime());
-				srb.setAcquisitionTime(toFormat.format(date));
-			}catch(Exception e){
-				// leave format as it is
-			}
+			srb.setAcquisitionTime(changeDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+					"yyyy-MM-dd HH:mm:ss",srb.getAcquisitionTime()));
 		}
 		
 		// fill meta parameter's for special cases - Campaign Name, User, Name & Institute
 		fillMetaParameterSpecialCases(ids, srbList);
 		
 		return srbList;
+	}
+	
+	
+	/**
+	 * changes the format of the given date
+	 * @param fromFormat = oldFormat of date
+	 * @param toFormat = desired new format of date
+	 * @param date = date string
+	 */
+	private String changeDateFormat(String fromFormat, String toFormat, String date){
+		try{
+			// format "2000-07-14T13:15:15:111Z" -> "2000-07-14 13:15:15"
+			SimpleDateFormat fFormat = new SimpleDateFormat(fromFormat);
+			SimpleDateFormat tFormat = new SimpleDateFormat(toFormat);
+			Date d = fFormat.parse(date);
+			return tFormat.format(d);
+		}catch(Exception e){
+			// leave date as it is
+			return date;
+		}
+	}
+	 
+	/**
+	 * returns a list with the attribute id of each given attribute name
+	 */
+	private ArrayList<Integer> getAttributeIds(List<String> attributeNames){
+		ArrayList<Integer> attributeIds = new ArrayList<Integer>();
+		for(String attributeName : attributeNames){
+			if(getAttributeId(attributeName) != -1)
+				attributeIds.add(getAttributeId(attributeName));
+		}
+		return attributeIds;
+	}
+	
+	
+	/**
+	 * returns the attribute id of the attribute with the given name
+	 */
+	private int getAttributeId(String attributeName){
+		int attributeId = -1;
+		
+		if(specchio_client.getAttributesNameHash().get(attributeName) != null)
+			attributeId = specchio_client.getAttributesNameHash().get(attributeName).getId();
+		
+		return attributeId;
 	}
 	
 	/**
@@ -430,24 +474,30 @@ public class SpecchioUtil {
 	}
 	
 	/**
-	 * Gets the value of the given attribute name for each spectrum id. 
+	 * Gets the values of the given attribute names for each spectrum id. 
 	 * Then fills the values inside the SearchResultBeans by using
 	 * reflection to call the setter methods.
 	 */
-	private void fillMetaParameter(String attributeName, List<Integer> ids, List<SearchResultBean> srbList) throws SPECCHIOClientException {
-		// list containing the values of the given attributeName for each spectrum id
-		MatlabAdaptedArrayList<Object> resultList = specchio_client.getMetaparameterValues((ArrayList<Integer>) ids, attributeName);
+	private void fillMetaParameters(List<String> attributeNames, List<Integer> spectrumIds, List<SearchResultBean> srbList) throws SPECCHIOClientException {
+		// list containing a list with the values of each given attributeName for each spectrum id
+		ArrayList<ArrayList<MetaParameter>> resultList = specchio_client.getMetaparameters((ArrayList<Integer>)spectrumIds, getAttributeIds(attributeNames));
+		if(resultList == null) return;
 		
 		Class[] paramString = new Class[1];
 		paramString[0] = String.class;
 		
 		for(int i = 0; i < resultList.size(); i++){
-			Object o = resultList.get(i);
-			try { 
-				Class<?> c = Class.forName("ch.specchio.model.SearchResultBean");
-				Method method = c.getDeclaredMethod(getSetterName(attributeName), paramString);
-				method.invoke(srbList.get(i), o != null ? o.toString() : "");
-			} catch (Exception e) { }
+			String attributeName = attributeNames.get(i);
+			
+			for(int j = 0; j < resultList.get(i).size(); j++){
+				MetaParameter mp = resultList.get(i).get(j);
+				try { 
+					Class<?> c = Class.forName("ch.specchio.model.SearchResultBean");
+					Method method = c.getDeclaredMethod(getSetterName(attributeName), paramString);
+					method.invoke(srbList.get(j), mp != null && mp.getValue() != null 
+							? mp.getValue().toString() : "");
+				} catch (Exception e) { }
+			}
 		}
 	}
 	
@@ -561,21 +611,10 @@ public class SpecchioUtil {
 	/**
 	 * returns the number of spectrum ids in the db
 	 */
-	public int getSpectrumIdCount() {
-		// to get all ids we do a fulltextsearch for empty string
-		// maybe later there will be an api method to get the id count
-		return getAllSpectrumIds() != null ? getAllSpectrumIds().size() : 0;
+	public int getSpectrumIdCount() throws SPECCHIOClientException {
+		return specchio_client.getSpectrumCountInDB();
 	}
 	
-	/**
-	 * returns a List of all spectrum ids in the db
-	 */
-	public List<Integer> getAllSpectrumIds() throws SPECCHIOClientException {
-		// to get all ids we do a fulltextsearch for empty string
-		// maybe later there will be an api method to get the id count
-		return specchio_client.getSpectrumIdsMatchingFullTextSearch("");
-	}
-
 	/**
 	 * returns all spectrum id's of the spectra matching the full text search
 	 */
@@ -659,7 +698,9 @@ public class SpecchioUtil {
 					map.put(mp.getCategoryName(), new LinkedList<Pair<String,String>>());
 				}
 				
-				String value = ""; // the attribute value
+				// get the metaparameter value or "" if it is null
+				String value = mp.getValue() != null ? mp.getValue().toString() : "";
+				
 				// for PDF's and Pictures we create a file. the value will be the filename.
 				if("PDFs".equals(mp.getCategoryName()) || "Pictures".equals(mp.getCategoryName())){
 					MetaFile mp_file = (MetaFile) mp; // get MetaFile
@@ -672,9 +713,20 @@ public class SpecchioUtil {
 						value = mp.getValue().toString();
 					}
 				}
-				// for all other attributes we use the metaparameter value
-				else value = mp.getValue().toString();
-					
+				// as wished by customer, the sign for longitude should always be changed
+				// therefore we multiply by -1
+				else if("Longitude".equals(mp.getAttributeName())){
+					try {
+						value = (-1) * Double.valueOf(mp.getValue().toString()) + "";
+					}
+					catch(Exception e){/* use the metaparameter value that came from api */}
+				}
+				// change format of date values
+				else if("Acquisition Time".equals(mp.getAttributeName()) || 
+						"Loading Time".equals(mp.getAttributeName()) || 
+						"Sample Collection Date".equals(mp.getAttributeName())){
+					value = changeDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'","yyyy-MM-dd HH:mm:ss", value);
+				}
 				// add a new pair with attribute name and attribute value to the list inside the map
 				map.get(mp.getCategoryName()).add(new Pair<>(mp.getAttributeName(), value));
 			}
@@ -695,7 +747,10 @@ public class SpecchioUtil {
 				
 				// get the conflict status
 				ConflictInfo  conflict = eav_conflict_stati.get(mp.getAttributeId());
-				int status = conflict.getConflictData(mp.getEavId()).getStatus();
+
+				ConflictStruct cs = conflict.getConflictData(mp.getEavId());
+				int status = cs != null ? cs.getStatus() : 0;
+				
 				
 				if(status == 3) {	// no conflict -> we can use the metaparameter value
 					map.get(mp.getCategoryName()).add(new Pair<>(mp.getAttributeName(), mp.getValue().toString()));
@@ -776,9 +831,13 @@ public class SpecchioUtil {
 					
 					if(lat != null && lng != null){
 						try{ // create a new latLong Pair
+							
+							// as wished by customer, all longitudes have to be multiplied by -1
+							double invertedLng = (-1) * Double.parseDouble(lng.toString());
+							
 							latLongList.add(new Pair<Double, Double>(
 									Double.parseDouble(lat.toString()), 
-									Double.parseDouble(lng.toString())));
+									invertedLng));
 						} catch (NumberFormatException e) {
 							// don't add anything to the list 
 						}
