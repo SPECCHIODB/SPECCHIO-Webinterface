@@ -398,10 +398,19 @@ public class SpecchioUtil {
 		// fill meta parameter's for the above defined attributes
 		fillMetaParameters(resultTableAttributes, ids, srbList);
 		
-		// change format of Acquisition Time for each bean
+		
+		// some values need to be modified
 		for(SearchResultBean srb : srbList){
+			// change format of Acquisition Time for each bean
 			srb.setAcquisitionTime(changeDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
 					"yyyy-MM-dd HH:mm:ss",srb.getAcquisitionTime()));
+			
+			// as wished by customer, the sign for longitude should always be changed
+			// therefore we multiply by -1
+			try{
+				double lng = Double.valueOf(srb.getLongitude());
+				srb.setLongitude((-1) * lng + "");
+			}catch(Exception e){ /* use the value that came from api */ }
 		}
 		
 		// fill meta parameter's for special cases - Campaign Name, User, Name & Institute
