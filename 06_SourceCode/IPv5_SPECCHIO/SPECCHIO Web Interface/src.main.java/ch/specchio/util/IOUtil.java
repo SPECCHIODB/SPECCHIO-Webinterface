@@ -142,7 +142,7 @@ public class IOUtil {
 		String connectionString = null;
 
 		// Look for "domain1" substring within path.
-		String directory = "domain1";
+		String directory = "specchio";
 		int endIndex = pathCurrentClass.indexOf(directory) + directory.length();
 
 		// Get path from root to "domain1" as String.
