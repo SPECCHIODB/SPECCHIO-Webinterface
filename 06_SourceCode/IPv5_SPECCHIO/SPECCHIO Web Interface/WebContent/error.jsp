@@ -10,7 +10,7 @@
 		
 		<!-- Custom styles for this template -->
     	<link href="css/errorpage.css" rel="stylesheet">
-    
+    	<link href="css/search.css" rel="stylesheet">
 	</head>
 	<body>
 	
@@ -30,7 +30,7 @@
 		
 		<!-- js imports -->
         <script src="js/bootstrap.min.js"></script>	
-        
+        <script src="js/jquery-2.1.4.min.js"></script>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     	<script src="js/ie10-viewport-bug-workaround.js"></script>
         
