@@ -516,24 +516,48 @@ public class SpecchioUtil {
 	 * Those are currently: Campaign Name, User, Name and Institute
 	 */
 	private void fillMetaParameterSpecialCases(List<Integer> ids, List<SearchResultBean> srbList) throws SPECCHIOClientException {
-		
-		// get all common and latin values for the spectrum id's
-		List<Object> commonList = specchio_client.getMetaparameterValues((ArrayList<Integer>) ids, "Common");
-		List<Object> latinList = specchio_client.getMetaparameterValues((ArrayList<Integer>) ids, "Latin");
-		
-		for(int i = 0; i < ids.size(); i++){
+
+		// Getting common and latin names for each id
+		for(int i=0; i <ids.size(); i++) {
+			
+			// List of 1 element, i to be passed to specchio_client methods
+			ArrayList<Integer> i_list = new ArrayList<Integer>();
+				i_list.add(i);
+			
+			List<Object> commonList = specchio_client.getMetaparameterValues((ArrayList<Integer>) i_list, "Common");
+			List<Object> latinList = specchio_client.getMetaparameterValues((ArrayList<Integer>) i_list, "Latin");
+						
+			Object common = "";
+			
+			// Not every id has a name match to common and latin - blank string if no name
+			if(commonList.isEmpty()) {
+				common = "";	
+			}
+			
+			else {
+				common = commonList.get(0);				
+			}
+			
+			Object latin = "";
+			
+			if(latinList.isEmpty()) {
+				latin = "";	
+			}
+			
+			else {
+				latin = latinList.get(0);				
+			}
+			
+			// Assigning final name based on whether common and latin match exists
+			String name = "";
+			name += common == null ? "" : common.toString();
+			name += latin == "" ? "" : name == "" ? latin : " (" + latin + ")";
+			
 			Spectrum spectrum = specchio_client.getSpectrum(ids.get(i), false);			// get the spectrum for the current id
 			Campaign campaign = specchio_client.getCampaign(spectrum.getCampaignId());	// get the campaign of the current spectrum
 			SearchResultBean srb = srbList.get(i);										// get the current SearchResultBean
-			
-			Object common = commonList.get(i);	// get the current common
-			Object latin = latinList.get(i);	// get the current latin
-			
-			// Name
-			String name = "";	// the name is a combination of common & latin
-			name += common == null ? "" : common.toString();
-			name += latin == null ? "" : name.isEmpty() ? latin : "(" + latin + ")";
-			srb.setName(name);	// is either 'common', 'latin' or 'common (latin)'
+
+			srb.setName(name);
 			
 			if(campaign != null) { 
 				srb.setCampaignName(campaign.getName()); // Campaign Name
@@ -556,6 +580,7 @@ public class SpecchioUtil {
 		}
 		
 	}
+
 	
 	/**
 	 * creates a eav query condition for the given SearchRowBean
