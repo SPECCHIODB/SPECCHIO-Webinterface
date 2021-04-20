@@ -770,7 +770,7 @@ public class SpecchioUtil {
 		else {
 			
 			// add EAV parameters including their conflict status
-			ConflictTable eav_conflict_stati = specchio_client.getEavMetadataConflicts((ArrayList<Integer>) idList);
+			ConflictTable eav_conflict_stati = specchio_client.getEavMetadataConflicts(1, (ArrayList<Integer>) idList);
 
 			for(MetaParameter mp : s.getMetadata().getEntries()){ // iterate over the metaparameters
 				
