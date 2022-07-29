@@ -654,7 +654,7 @@ public class SpecchioUtil {
 	 */
 	private List<Integer> doFullTextSearch(SearchRowBean srb) throws SPECCHIOClientException {
 		if(srb == null) return new ArrayList<Integer>();
-		List<Integer> idList = specchio_client.getSpectrumIdsMatchingFullTextSearchUsingHierarchy(srb.getUserInput1());
+		List<Integer> idList = specchio_client.getSpectrumIdsMatchingFullTextSearch(srb.getUserInput1());
 		return idList != null ? idList : new ArrayList<Integer>();
 	}
 
